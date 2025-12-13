@@ -1,0 +1,18 @@
+{
+    "background_color": "#0f172a",
+    "description": "Bun + React starter with offline support.",
+    "display": "standalone",
+    "icons": [
+        {
+            "purpose": "any maskable",
+            "sizes": "512x512",
+            "src": "/logo.svg",
+            "type": "image/svg+xml"
+        }
+    ],
+    "name": "Bun + React Starter",
+    "scope": "/",
+    "short_name": "BunReact",
+    "start_url": "/",
+    "theme_color": "#0f172a"
+}

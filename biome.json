@@ -1,0 +1,92 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+    "assist": {
+        "actions": {
+            "source": {
+                "organizeImports": "on"
+            }
+        }
+    },
+    "files": {
+        "ignoreUnknown": false,
+        "includes": [
+            "**",
+            "!**/.next",
+            "!**/dist",
+            "!**/.turbo",
+            "!**/dev-dist",
+            "!**/.zed",
+            "!**/.vscode",
+            "!**/routeTree.gen.ts",
+            "!**/src-tauri",
+            "!**/.nuxt",
+            "!bts.jsonc",
+            "!**/.expo",
+            "!**/.wrangler",
+            "!**/.alchemy",
+            "!**/wrangler.jsonc",
+            "!**/.source"
+        ]
+    },
+    "formatter": {
+        "attributePosition": "auto",
+        "enabled": true,
+        "formatWithErrors": false,
+        "indentStyle": "space",
+        "indentWidth": 2,
+        "lineEnding": "lf",
+        "lineWidth": 80
+    },
+    "javascript": {
+        "formatter": {
+            "jsxQuoteStyle": "double",
+            "quoteStyle": "double"
+        }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "correctness": {
+                "useExhaustiveDependencies": "info"
+            },
+            "nursery": {
+                "useSortedClasses": {
+                    "fix": "safe",
+                    "level": "warn",
+                    "options": {
+                        "functions": [
+                            "clsx",
+                            "cva",
+                            "cn"
+                        ]
+                    }
+                }
+            },
+            "recommended": true,
+            "style": {
+                "noInferrableTypes": "error",
+                "noParameterAssign": "error",
+                "noUnusedTemplateLiteral": "error",
+                "noUselessElse": "error",
+                "useAsConstAssertion": "error",
+                "useDefaultParameterLast": "error",
+                "useEnumInitializers": "error",
+                "useNumberNamespace": "error",
+                "useSelfClosingElements": "error",
+                "useSingleVarDeclarator": "error"
+            }
+        }
+    },
+    "overrides": [
+        {
+            "linter": {
+                "enabled": false
+            }
+        }
+    ],
+    "vcs": {
+        "clientKind": "git",
+        "enabled": false,
+        "useIgnoreFile": false
+    }
+}
