@@ -2,24 +2,25 @@
 
 declare const self: ServiceWorkerGlobalScope;
 
-const CACHE_NAME = "bun-starter-cache-v1";
-const PRECACHE_URLS = ["/", "/index.html"];
+const CACHE_NAME = "app-static-v1";
 
-self.addEventListener("install", (event: ExtendableEvent) => {
-  event.waitUntil(
-    caches
-      .open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting()),
-  );
+self.addEventListener("install", () => {
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event: ExtendableEvent) => {
   event.waitUntil(
-    caches
-      .keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
-      .then(() => self.clients.claim()),
+    (async () => {
+      // ลบ cache เก่า (optional แต่แนะนำ)
+      const keys = await caches.keys();
+      await Promise.all(
+        keys.map((k) =>
+          k !== CACHE_NAME ? caches.delete(k) : Promise.resolve(),
+        ),
+      );
+
+      await self.clients.claim();
+    })(),
   );
 });
 
@@ -28,6 +29,11 @@ self.addEventListener("fetch", (event: FetchEvent) => {
   const url = new URL(request.url);
 
   if (request.method !== "GET" || url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Don't cache API requests
+  if (url.pathname.startsWith("/api")) {
     return;
   }
 
@@ -44,7 +50,7 @@ async function networkFirst(request: Request) {
 
   try {
     const response = await fetch(request);
-    if (response && response.ok) {
+    if (response?.ok) {
       cache.put(request, response.clone());
     }
     return response;
@@ -68,10 +74,16 @@ async function cacheFirst(request: Request) {
   if (cached) return cached;
 
   const response = await fetch(request);
-  if (response && response.ok) {
+  if (response?.ok) {
     cache.put(request, response.clone());
   }
 
   return response;
 }
 
+// Listen for messages from clients
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});

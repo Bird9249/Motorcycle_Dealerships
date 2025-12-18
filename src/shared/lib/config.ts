@@ -1,4 +1,4 @@
 export const config = {
-  apiUrl: process.env.PUBLIC_SERVER_URL,
-  authUrl: process.env.PUBLIC_SERVER_URL + "/auth",
+  apiUrl: window.location.origin + "/api",
+  authUrl: window.location.origin + "/api/auth",
 };

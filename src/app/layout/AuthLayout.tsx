@@ -1,7 +1,7 @@
+import { useAuthState } from "@/modules/auth/presentation/model/useAuthState";
 import { Loader } from "@devhop/ui";
 import { Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useAuthState } from "@/modules/auth/presentation/model/useAuthState";
 
 export function AuthLayout() {
   const { isLoading, isAuthenticated } = useAuthState();
@@ -37,7 +37,7 @@ export function AuthLayout() {
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
-          <h1 className="font-medium text-xl">Shadcn Admin</h1>
+          <h1 className="font-medium text-xl"> Admin Panel</h1>
         </div>
         <Outlet />
       </div>
