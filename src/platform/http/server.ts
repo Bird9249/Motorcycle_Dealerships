@@ -1,10 +1,10 @@
 import { auditContextMiddleware } from "@/modules/audit/domain/http/middleware";
 import { auth } from "@/modules/auth/domain/better-auth";
+import { registerRest } from "@/server/api/rest";
 import type { HonoContext } from "@/shared/types";
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { cors } from "hono/cors";
-import { registerRest } from "../../api/rest";
 import { errorHandler } from "./middleware/error";
 import { httpLogger } from "./middleware/logger";
 import { withTransaction } from "./middleware/transaction";

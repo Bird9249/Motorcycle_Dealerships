@@ -1,0 +1,10 @@
+- name: Run database migrations
+  hosts: prod
+  become: true
+  vars_files:
+    - ../group_vars/prod.yml
+  vars:
+    ansible_roles_path: ../roles
+  tasks:
+    - name: Include migrate tasks
+      include_tasks: ../roles/app/tasks/migrate.yml

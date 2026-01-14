@@ -1,0 +1,58 @@
+- name: Check if local SQL dir exists
+  delegate_to: localhost
+  run_once: true
+  become: false
+  stat: { path: "{{ local_sql_dir }}" }
+  register: sql_dir
+
+- name: Create migrations directory in shared
+  file:
+    path: "{{ server_shared }}/migrations"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+
+- name: Upload SQL migrations to shared (if present)
+  when: sql_dir.stat.exists
+  synchronize:
+    src: "{{ local_sql_dir }}/"
+    dest: "{{ server_shared }}/migrations/"
+    rsync_opts: ["--delete"]
+  delegate_to: localhost
+  become: false
+
+- name: Run database migrations
+  when: sql_dir.stat.exists
+  shell: |
+    set -e
+    DBURL="$(awk -F= '/^DATABASE_URL=/{print $2}' /etc/{{ app_name }}.env)"
+    DB_NAME=$(echo "$DBURL" | sed 's|.*/\([^?]*\).*|\1|')
+
+    echo "Database URL: $DBURL"
+    echo "Database Name: $DB_NAME"
+    
+    # Create schema_migrations table if not exists (as postgres user)
+    echo "Creating schema_migrations table if not exists..."
+    sudo -u postgres psql -d "$DB_NAME" -c "
+    CREATE TABLE IF NOT EXISTS schema_migrations (
+      id serial PRIMARY KEY,
+      filename text UNIQUE NOT NULL,
+      applied_at timestamptz NOT NULL DEFAULT now()
+    );"
+    
+    # Apply pending migrations (as postgres user)
+    echo "Checking for pending migrations..."
+    for f in $(ls -1 {{ server_shared }}/migrations/*.sql 2>/dev/null | sort); do
+      base=$(basename "$f")
+      echo "Checking migration: $base"
+      EXISTS=$(sudo -u postgres psql -At -d "$DB_NAME" -c "SELECT 1 FROM schema_migrations WHERE filename='$base' LIMIT 1;" 2>/dev/null || echo "")
+      if [ "$EXISTS" != "1" ]; then
+        echo "Applying $base"
+        sudo -u postgres psql -d "$DB_NAME" -f "$f"
+        sudo -u postgres psql -d "$DB_NAME" -c "INSERT INTO schema_migrations(filename) VALUES ('$base');"
+      else
+        echo "Skip $base (already applied)"
+      fi
+    done
+    echo "Migration completed successfully"

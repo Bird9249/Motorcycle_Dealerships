@@ -1,0 +1,42 @@
+- name: Check if bun is installed
+  command: which bun
+  register: bun_check
+  failed_when: false
+  changed_when: false
+
+- name: Fail if bun is not installed
+  fail:
+    msg: "Bun is not installed. Please install bun first: curl -fsSL https://bun.sh/install | bash"
+  when: bun_check.rc != 0
+
+- name: Check if rsync is installed
+  command: which rsync
+  register: rsync_check
+  failed_when: false
+  changed_when: false
+
+- name: Fail if rsync is not installed
+  fail:
+    msg: "rsync is not installed. Please install rsync: apt-get install rsync"
+  when: rsync_check.rc != 0
+
+- name: Check if environment file exists
+  stat:
+    path: "/etc/{{ app_name }}.env"
+  register: env_file
+
+- name: Fail if environment file does not exist
+  fail:
+    msg: "Environment file /etc/{{ app_name }}.env does not exist. Please create it first."
+  when: not env_file.stat.exists
+
+- name: Check if PostgreSQL is running
+  systemd:
+    name: postgresql
+  register: postgres_status
+  failed_when: false
+
+- name: Warn if PostgreSQL is not running
+  debug:
+    msg: "PostgreSQL is not running. Please start it: systemctl start postgresql"
+  when: postgres_status.status.ActiveState != "active"

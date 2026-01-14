@@ -1,0 +1,16 @@
+[Unit]
+Description={{ app_name }} Worker (Bun)
+After=network.target
+
+[Service]
+User={{ app_user }}
+Group={{ app_group }}
+WorkingDirectory={{ server_current }}
+EnvironmentFile=/etc/{{ app_name }}.env
+ExecStart=/root/.bun/bin/bun worker/worker.js
+Environment=NODE_ENV=production
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

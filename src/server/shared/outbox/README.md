@@ -1,66 +1,55 @@
-### Shared Outbox Pattern (Generic)
+### Outbox Pattern with pg-transactional-outbox
 
-This module provides a generic, reusable implementation of the Outbox pattern that is not tied to the audit domain. Use it from any module that needs reliable, asynchronous processing.
+This module uses `pg-transactional-outbox` library to implement the transactional outbox pattern for reliable, asynchronous message processing.
 
 Contents:
 
-- `schema.ts`: `makeOutboxTable(tableName)` factory and `outboxStatus` enum for a JSONB outbox table.
-- `publisher.ts`: lightweight append-only publisher helpers to write payloads to an outbox table.
-- `worker.ts`: a generic polling worker that reads pending outbox rows, calls your `process` function, and updates status with retry/backoff.
-- `types.ts`: basic Outbox typing helpers.
+- `config.ts`: Configuration for pg-transactional-outbox service
+- `message-storage.ts`: Helpers to store messages in outbox table
+- `service.ts`: Outbox service initialization
+- `pg-client.ts`: PostgreSQL client pool for outbox operations
 
 Quick start
 
-1. Define a table for your module
+1. Store messages in outbox from your use case or adapter
 
 ```ts
-// e.g. src/modules/payments/infra/db/payment.schema.ts
-import { makeOutboxTable } from "@/server/shared/outbox/schema";
+import { storeAuditOutboxMessage } from "@/server/shared/outbox/message-storage";
+import { getPgClient } from "@/server/shared/outbox/pg-client";
+import type { Client } from "pg";
 
-export const paymentOutbox = makeOutboxTable("payment_outbox");
+// Within a transaction
+const pgClient = await getPgClient();
+try {
+  await pgClient.query("BEGIN");
+  await storeAuditOutboxMessage(eventId, eventData, pgClient);
+  await pgClient.query("COMMIT");
+} catch (error) {
+  await pgClient.query("ROLLBACK");
+  throw error;
+} finally {
+  pgClient.release();
+}
 ```
 
-2. Append to outbox from your use case or adapter
+2. Initialize outbox service to process messages
 
 ```ts
-import { bindOutboxPublisher } from "@/server/shared/outbox/publisher";
-import { paymentOutbox } from "./payment.schema";
-import { db } from "@/server/platform/db/client";
+import { createOutboxService } from "@/server/shared/outbox/service";
 
-const publisher = bindOutboxPublisher<{ type: string; data: unknown }>(
-  paymentOutbox,
-  db
-);
-await publisher.append([{ type: "PAYMENT.CAPTURED", data: { id: paymentId } }]);
-```
-
-3. Run a worker to process the outbox
-
-```ts
-import { createOutboxWorker } from "@/server/shared/outbox/worker";
-import { paymentOutbox } from "./payment.schema";
-import { db } from "@/server/platform/db/client";
-
-const worker = createOutboxWorker(db, {
-  table: paymentOutbox,
-  batchSize: 100,
-  maxRetry: 5,
-  backoffMs: 15000,
-  async process(tx, rows) {
-    // Your side-effects (publish to broker, call downstream, etc.)
-    for (const r of rows) {
-      // do work with r.payload
-    }
-    // Return ids you successfully processed
-    return rows.map((r) => r.id);
-  },
+const outboxService = createOutboxService(async (message) => {
+  // Process message.payload
+  // pg-transactional-outbox handles retry logic automatically
 });
 
-worker.start(2000); // or call worker.flushOnce() manually from a scheduler
+// Shutdown when done
+await outboxService.shutdown();
 ```
 
 Notes
 
-- Writes are append-only; the worker transitions status `pending → processing → done` or schedules retry/backoff and eventually marks `dead` after `maxRetry`.
-- Keep your `process` function idempotent. If something fails mid-batch, the worker increments `retryCount` and reschedules.
-- Use the transaction (`tx`) parameter in `process` to couple any read/write you need with the same DB client for consistency.
+- Messages are stored in the same transaction as business data for atomicity
+- pg-transactional-outbox handles retry logic, backoff, and dead letter queue automatically
+- The library uses polling (configurable interval) to process pending messages
+- Keep your message handler function idempotent
+- The library manages status transitions internally

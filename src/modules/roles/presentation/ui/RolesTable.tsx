@@ -95,51 +95,53 @@ export function RolesTable({
   ];
 
   return (
-    <DataTable<RoleDTO, unknown>
-      noDataMessage="ບໍ່ພົບບົດບາດ"
-      isLoading={isLoading}
-      columns={columns}
-      data={data}
-      offset={offset}
-      limit={limit}
-      totalCount={totalCount}
-      onPaginationChange={(pagination) =>
-        onPaginationChange(pagination.offset, pagination.limit)
-      }
-      sortBy={sortBy}
-      sortOrder={sortOrder}
-      onSortingChange={(sorting) => {
-        if (sorting[0]?.id === "") return;
-        onSortingChange(sorting[0]?.id as string, !!sorting[0]?.desc);
-      }}
-      renderExpandedContent={({ original }) => {
-        return (
-          <div className="space-y-4 rounded-lg bg-muted/50 p-4">
-            <div>
-              <h4 className="mb-2 font-medium text-sm">ຄໍາອະທິບາຍ</h4>
-              <p className="text-muted-foreground text-sm">
-                {original.description || "ບໍ່ມີຄໍາອະທິບາຍ"}
-              </p>
-            </div>
+    <div data-tourid="roles-table">
+      <DataTable<RoleDTO, unknown>
+        noDataMessage="ບໍ່ພົບບົດບາດ"
+        isLoading={isLoading}
+        columns={columns}
+        data={data}
+        offset={offset}
+        limit={limit}
+        totalCount={totalCount}
+        onPaginationChange={(pagination) =>
+          onPaginationChange(pagination.offset, pagination.limit)
+        }
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSortingChange={(sorting) => {
+          if (sorting[0]?.id === "") return;
+          onSortingChange(sorting[0]?.id as string, !!sorting[0]?.desc);
+        }}
+        renderExpandedContent={({ original }) => {
+          return (
+            <div className="space-y-4 rounded-lg bg-muted/50 p-4">
+              <div>
+                <h4 className="mb-2 font-medium text-sm">ຄໍາອະທິບາຍ</h4>
+                <p className="text-muted-foreground text-sm">
+                  {original.description || "ບໍ່ມີຄໍາອະທິບາຍ"}
+                </p>
+              </div>
 
-            <div>
-              <h4 className="mb-2 font-medium text-sm">
-                ສິດທິ ({original.permissions.length})
-              </h4>
-              <div className="flex flex-wrap gap-1">
-                {original.permissions.map((per) => (
-                  <span
-                    key={per}
-                    className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 font-medium text-primary text-xs"
-                  >
-                    {getPermissionLabel(per as PermissionId)}
-                  </span>
-                ))}
+              <div>
+                <h4 className="mb-2 font-medium text-sm">
+                  ສິດທິ ({original.permissions.length})
+                </h4>
+                <div className="flex flex-wrap gap-1">
+                  {original.permissions.map((per) => (
+                    <span
+                      key={per}
+                      className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 font-medium text-primary text-xs"
+                    >
+                      {getPermissionLabel(per as PermissionId)}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      }}
-    />
+          );
+        }}
+      />
+    </div>
   );
 }

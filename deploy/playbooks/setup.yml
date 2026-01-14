@@ -1,0 +1,145 @@
+- name: Initial server setup
+  hosts: prod
+  become: true
+  vars_files:
+    - ../group_vars/prod.yml
+  vars:
+    ansible_roles_path: ../roles
+  tasks:
+    - name: Create systemd service files
+      template:
+        src: "{{ item }}.j2"
+        dest: "/etc/systemd/system/{{ item | replace('[[app_name]]', app_name) }}"
+        owner: root
+        group: root
+        mode: "0644"
+      loop:
+        - "[[app_name]].service"
+        - "[[app_name]]-worker.service"
+      notify:
+        - daemon-reload
+
+    - name: Ensure nginx is installed and running
+      systemd:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Create web root directory for SSL challenges
+      file:
+        path: /var/www/html
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: "0755"
+
+    - name: Wait for apt to be available
+      shell: |
+        while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+          echo "Waiting for apt to be available..."
+          sleep 5
+        done
+      register: apt_wait
+      failed_when: false
+
+    - name: Install certbot
+      apt:
+        name: certbot
+        state: present
+        update_cache: yes
+      retries: 3
+      delay: 10
+
+    - name: Install python3-certbot-nginx plugin
+      apt:
+        name: python3-certbot-nginx
+        state: present
+      retries: 3
+      delay: 10
+
+    - name: Stop nginx before SSL setup
+      systemd:
+        name: nginx
+        state: stopped
+
+    - name: Create temporary HTTP-only config for SSL challenge
+      template:
+        src: "nginx-admin-http.conf.j2"
+        dest: "/etc/nginx/sites-available/{{ app_name }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+
+    - name: Enable temporary HTTP config
+      file:
+        src: "/etc/nginx/sites-available/{{ app_name }}"
+        dest: "/etc/nginx/sites-enabled/{{ app_name }}"
+        state: link
+
+    - name: Start nginx for SSL challenge
+      systemd:
+        name: nginx
+        state: started
+
+    - name: Obtain SSL certificate for API domain
+      command: >
+        certbot certonly --nginx
+        --non-interactive --agree-tos
+        --email {{ ssl_email }}
+        --domains {{ api_domain }}
+        --expand
+      register: api_ssl_result
+      failed_when: api_ssl_result.rc not in [0, 1]  # 1 = already exists
+
+
+    - name: Remove temporary HTTP config
+      file:
+        path: "/etc/nginx/sites-enabled/{{ app_name }}"
+        state: absent
+
+    - name: Create SSL-enabled nginx config
+      template:
+        src: "nginx-admin.conf.j2"
+        dest: "/etc/nginx/sites-available/{{ app_name }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Enable SSL nginx config
+      file:
+        src: "/etc/nginx/sites-available/{{ app_name }}"
+        dest: "/etc/nginx/sites-enabled/{{ app_name }}"
+        state: link
+
+    - name: Test nginx configuration
+      command: nginx -t
+      register: nginx_test
+      changed_when: false
+
+    - name: Fail if nginx config is invalid
+      fail:
+        msg: "Nginx configuration test failed: {{ nginx_test.stderr }}"
+      when: nginx_test.rc != 0
+
+    - name: Reload nginx
+      systemd:
+        name: nginx
+        state: reloaded
+
+    - name: Setup SSL auto-renewal cron job
+      cron:
+        name: "SSL Certificate Auto-Renewal"
+        minute: "0"
+        hour: "2"
+        job: "/usr/bin/certbot renew --quiet --nginx --post-hook 'systemctl reload nginx'"
+        user: root
+
+  handlers:
+    - name: daemon-reload
+      command: systemctl daemon-reload
+
+    - name: reload nginx
+      systemd:
+        name: nginx
+        state: reloaded

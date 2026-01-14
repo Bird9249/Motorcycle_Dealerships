@@ -52,7 +52,10 @@ export function RolesFilter() {
   const hasFilter = Boolean(nameFilter?.value);
 
   return (
-    <div className="mb-4 flex items-center justify-between gap-4 px-2">
+    <div
+      className="mb-4 flex items-center justify-between gap-4 px-2"
+      data-tourid="roles-filter"
+    >
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="ຄົ້ນຫາບົດບາດ..."

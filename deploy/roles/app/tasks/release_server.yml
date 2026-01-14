@@ -1,0 +1,150 @@
+- name: Create server release dir
+  file:
+    path: "{{ server_releases }}/{{ release_id }}/server"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+
+- name: Rsync server dist
+  synchronize:
+    src: "{{ local_server_dist }}/"
+    dest: "{{ server_releases }}/{{ release_id }}/server/dist/"
+    rsync_opts: ["--delete", "--mkpath"]
+  delegate_to: localhost
+  become: false
+
+- name: Create server public dir
+  file:
+    path: "{{ server_releases }}/{{ release_id }}/server/public"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+
+- name: Create shared uploads directory
+  file:
+    path: "{{ server_shared }}/uploads"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+
+- name: Create shared subdirectories for uploads
+  file:
+    path: "{{ server_shared }}/uploads/{{ item }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+  loop:
+    - "uploads"           # User avatars
+    - "banners"           # Banner images
+    - "products"          # Product images (will have subdirs like products/123/images)
+
+- name: Ensure products subdirectories exist in shared
+  file:
+    path: "{{ server_shared }}/uploads/products"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+  ignore_errors: true
+
+- name: Set proper permissions for products directory
+  file:
+    path: "{{ server_shared }}/uploads/products"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+    recurse: true
+
+- name: Link server public to shared uploads
+  file:
+    src: "{{ server_shared }}/uploads"
+    dest: "{{ server_releases }}/{{ release_id }}/server/public"
+    state: link
+    force: true
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Create web release dir
+  file:
+    path: "{{ web_releases }}/{{ release_id }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+
+- name: Rsync web dist
+  synchronize:
+    src: "{{ local_web_dist }}/"
+    dest: "{{ web_releases }}/{{ release_id }}/"
+    rsync_opts: ["--delete", "--mkpath"]
+  delegate_to: localhost
+  become: false
+
+- name: Point server current -> this release
+  file:
+    src: "{{ server_releases }}/{{ release_id }}"
+    dest: "{{ server_current }}"
+    state: link
+    force: true
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Point web current -> this release
+  file:
+    src: "{{ web_releases }}/{{ release_id }}"
+    dest: "{{ web_current }}"
+    state: link
+    force: true
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: daemon-reload
+  command: systemctl daemon-reload
+
+- name: Restart API
+  systemd:
+    name: "{{ api_service }}"
+    state: restarted
+    enabled: true
+
+- name: Restart Worker
+  systemd:
+    name: "{{ worker_service }}"
+    state: restarted
+    enabled: true
+
+- name: Wait for API service to start
+  wait_for:
+    port: "{{ api_port }}"
+    host: "127.0.0.1"
+    delay: 5
+    timeout: 30
+
+- name: Check API service status
+  systemd:
+    name: "{{ api_service }}"
+  register: api_status
+
+- name: Fail if API service is not running
+  fail:
+    msg: "API service failed to start"
+  when: api_status.status.ActiveState != "active"
+
+- name: Check Worker service status
+  systemd:
+    name: "{{ worker_service }}"
+  register: worker_status
+
+- name: Fail if Worker service is not running
+  fail:
+    msg: "Worker service failed to start"
+  when: worker_status.status.ActiveState != "active"
+
+- name: Reload nginx
+  service:
+    name: nginx
+    state: reloaded

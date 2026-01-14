@@ -1,0 +1,33 @@
+# ตัวอย่างการตั้งค่า - แก้ไขตามโปรเจคของคุณ
+app_name: "admin"
+app_user: "root"
+app_group: "root"
+
+# server-side paths (backend)
+app_root: "/opt/admin"
+server_releases: "{{ app_root }}/releases"
+server_current: "{{ app_root }}/current"
+server_shared: "{{ app_root }}/shared"     # for migrations, uploads, etc.
+
+# local repo paths (run ansible from monorepo root)
+local_repo: "/home/bird/Desktop/Starter_Admin"
+local_server_dist: "{{ local_repo }}/out"
+local_sql_dir: "{{ local_repo }}/src/server/platform/db/migrations"  # adjust if needed
+
+# services & ports
+api_service: "admin"
+worker_service: "admin-worker"
+api_port: 3000
+worker_port: "{{ api_port | int + 1 }}"  # Worker port is API port + 1 (3004)
+
+# releases to keep
+keep_releases: 5
+
+# domains for nginx (separate API and admin)
+api_domain: "admin.example.com"  # แก้ไขตาม domain จริง
+
+# SSL settings
+ssl_email: "admin@example.com"  # Email for Let's Encrypt notifications
+ssl_country: "LA"
+ssl_state: "Vientiane"
+ssl_organization: "Admin"

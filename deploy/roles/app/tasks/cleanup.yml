@@ -1,0 +1,25 @@
+- name: Prune old server releases
+  command: "ls -1 {{ server_releases }}"
+  register: srels
+  changed_when: false
+  failed_when: srels.rc not in [0,2]  # tolerate empty dir
+
+- name: Remove old server releases
+  when: srels.stdout_lines | length > keep_releases
+  file:
+    path: "{{ server_releases }}/{{ item }}"
+    state: absent
+  loop: "{{ (srels.stdout_lines | sort) | reverse | ansible.utils.slice(start=keep_releases) }}"
+
+- name: Prune old web releases
+  command: "ls -1 {{ web_releases }}"
+  register: wrels
+  changed_when: false
+  failed_when: wrels.rc not in [0,2]
+
+- name: Remove old web releases
+  when: wrels.stdout_lines | length > keep_releases
+  file:
+    path: "{{ web_releases }}/{{ item }}"
+    state: absent
+  loop: "{{ (wrels.stdout_lines | sort) | reverse | ansible.utils.slice(start=keep_releases) }}"

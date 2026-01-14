@@ -1,11 +1,11 @@
+import { RequirePermissions } from "@/modules/auth/presentation/ui/RequirePermissions";
+import { LazyPage } from "@/shared/ui/LazyPage";
 import {
   createRootRoute,
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
 import { lazy } from "react";
-import { RequirePermissions } from "@/modules/auth/presentation/ui/RequirePermissions";
-import { LazyPage } from "@/shared/ui/LazyPage";
 
 const RootLayout = lazy(() =>
   import("./layout/RootLayout").then((module) => ({
@@ -34,13 +34,25 @@ const AuthenticatedLayout = lazy(() =>
   })),
 );
 const DashboardPage = lazy(() =>
-  import("@/modules/dashboard/presentation/pages/DashboardPage").then((module) => ({
-    default: module.DashboardPage,
-  })),
+  import("@/modules/dashboard/presentation/pages/DashboardPage").then(
+    (module) => ({
+      default: module.DashboardPage,
+    }),
+  ),
 );
 const RolesPage = lazy(() =>
   import("@/modules/roles/presentation/pages/RolesPage").then((module) => ({
     default: module.RolesPage,
+  })),
+);
+const RoleCreatePage = lazy(() =>
+  import("@/modules/roles/presentation/pages/RoleCreatePage").then((module) => ({
+    default: module.RoleCreatePage,
+  })),
+);
+const RoleEditPage = lazy(() =>
+  import("@/modules/roles/presentation/pages/RoleEditPage").then((module) => ({
+    default: module.RoleEditPage,
   })),
 );
 const AuditPage = lazy(() =>
@@ -49,13 +61,25 @@ const AuditPage = lazy(() =>
   })),
 );
 const AuditDetailPage = lazy(() =>
-  import("@/modules/audit/presentation/pages/AuditDetailPage").then((module) => ({
-    default: module.AuditDetailPage,
-  })),
+  import("@/modules/audit/presentation/pages/AuditDetailPage").then(
+    (module) => ({
+      default: module.AuditDetailPage,
+    }),
+  ),
 );
 const UsersPage = lazy(() =>
   import("@/modules/users/presentation/pages/UsersPage").then((module) => ({
     default: module.UsersPage,
+  })),
+);
+const UserCreatePage = lazy(() =>
+  import("@/modules/users/presentation/pages/UserCreatePage").then((module) => ({
+    default: module.UserCreatePage,
+  })),
+);
+const UserEditPage = lazy(() =>
+  import("@/modules/users/presentation/pages/UserEditPage").then((module) => ({
+    default: module.UserEditPage,
   })),
 );
 const ProfilePage = lazy(() =>
@@ -66,6 +90,12 @@ const ProfilePage = lazy(() =>
 const Forbidden = lazy(() =>
   import("./error/Forbidden").then((module) => ({
     default: module.Forbidden,
+  })),
+);
+
+const MediaPage = lazy(() =>
+  import("@/modules/media/presentation/pages/MediaPage").then((module) => ({
+    default: module.MediaPage,
   })),
 );
 
@@ -92,6 +122,16 @@ const appRoute = createRoute({
   component: AuthenticatedLayout,
 });
 
+const mediaRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/media",
+  component: () => (
+    <LazyPage>
+      <MediaPage />
+    </LazyPage>
+  ),
+});
+
 const dashboardRoute = createRoute({
   getParentRoute: () => appRoute,
   path: "/dashboard",
@@ -109,6 +149,30 @@ const rolesRoute = createRoute({
     <RequirePermissions all={["users:read"]} any={["users:ban"]}>
       <LazyPage>
         <RolesPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const roleCreateRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/roles/create",
+  component: () => (
+    <RequirePermissions all={["users:read"]} any={["users:ban"]}>
+      <LazyPage>
+        <RoleCreatePage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const roleEditRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/roles/$id/edit",
+  component: () => (
+    <RequirePermissions all={["users:read"]} any={["users:ban"]}>
+      <LazyPage>
+        <RoleEditPage />
       </LazyPage>
     </RequirePermissions>
   ),
@@ -150,6 +214,30 @@ const usersRoute = createRoute({
   ),
 });
 
+const userCreateRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/users/create",
+  component: () => (
+    <RequirePermissions all={["users:read"]} any={["users:create"]}>
+      <LazyPage>
+        <UserCreatePage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const userEditRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/users/$id/edit",
+  component: () => (
+    <RequirePermissions all={["users:read"]} any={["users:update"]}>
+      <LazyPage>
+        <UserEditPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
 const profileRoute = createRoute({
   getParentRoute: () => appRoute,
   path: "/profile",
@@ -175,10 +263,15 @@ export const routeTree = rootRoute.addChildren([
   appRoute.addChildren([
     dashboardRoute,
     rolesRoute,
+    roleCreateRoute,
+    roleEditRoute,
     usersRoute,
+    userCreateRoute,
+    userEditRoute,
     auditRoute,
     auditDetailRoute,
     profileRoute,
+    mediaRoute,
   ]),
   forbiddenRoute,
 ]);

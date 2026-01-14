@@ -1,9 +1,6 @@
 import type { RoleDTO } from "@/modules/roles/presentation/api/client";
 import { config } from "@/shared/lib/config";
-import {
-  fetchLookupForInfinite,
-  hydrateLookupItem,
-} from "@/shared/lib/utils";
+import { fetchLookupForInfinite, hydrateLookupItem } from "@/shared/lib/utils";
 import { FormInfiniteCombobox } from "@/shared/ui/FormInfiniteCombobox";
 import {
   Button,
@@ -77,7 +74,7 @@ export function UserForm({
       }
       className="space-y-4"
     >
-      <div>
+      <div data-tourid="form-avatar">
         <div className="mb-2 block text-sm">ຮູບໂປຣໄຟລ໌</div>
         <FormAvatarUpload
           name="image"
@@ -89,37 +86,45 @@ export function UserForm({
           maxSizeBytes={1024 * 1024 * 5}
         />
       </div>
-      <FormInput
-        name="email"
-        label="ອີເມວ"
-        type="email"
-        requiredMark
-        placeholder="name@example.com"
-      />
-      <FormInput name="name" label="ຊື່" requiredMark placeholder="John Doe" />
-      <FormPassword
-        name="password"
-        label="ລະຫັດຜ່ານ"
-        placeholder="********"
-        requiredMark={!initialValues}
-      />
-      <FormInfiniteCombobox<RoleDTO>
-        name="roleId"
-        label="ບົດບາດ"
-        requiredMark
-        queryKey={["roles"]}
-        queryFn={(args) =>
-          fetchLookupForInfinite(`${config.apiUrl}/rbac/roles/lookup`, args)
-        }
-        preloadQueryFn={(id) =>
-          hydrateLookupItem(`${config.apiUrl}/rbac/roles/lookup`, id)
-        }
-        getLabel={(item) => item.name}
-        getValue={(item) => item.id}
-        placeholder="ເລືອກບົດບາດ..."
-      />
+      <div data-tourid="form-email">
+        <FormInput
+          name="email"
+          label="ອີເມວ"
+          type="email"
+          requiredMark
+          placeholder="name@example.com"
+        />
+      </div>
+      <div data-tourid="form-name">
+        <FormInput name="name" label="ຊື່" requiredMark placeholder="John Doe" />
+      </div>
+      <div data-tourid="form-password">
+        <FormPassword
+          name="password"
+          label="ລະຫັດຜ່ານ"
+          placeholder="********"
+          requiredMark={!initialValues}
+        />
+      </div>
+      <div data-tourid="form-role">
+        <FormInfiniteCombobox<RoleDTO>
+          name="roleId"
+          label="ບົດບາດ"
+          requiredMark
+          queryKey={["roles"]}
+          queryFn={(args) =>
+            fetchLookupForInfinite(`${config.apiUrl}/rbac/roles/lookup`, args)
+          }
+          preloadQueryFn={(id) =>
+            hydrateLookupItem(`${config.apiUrl}/rbac/roles/lookup`, id)
+          }
+          getLabel={(item) => item.name}
+          getValue={(item) => item.id}
+          placeholder="ເລືອກບົດບາດ..."
+        />
+      </div>
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2" data-tourid="form-submit">
         <Button type="submit" isLoading={submitting}>
           ບັນທຶກ
         </Button>

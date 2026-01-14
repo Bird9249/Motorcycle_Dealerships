@@ -1,6 +1,7 @@
 import {
   AudioWaveform,
   Command,
+  FileIcon,
   GalleryVerticalEnd,
   LayoutDashboard,
   ShieldCheck,
@@ -41,6 +42,11 @@ export const sidebarData: SidebarData = {
     {
       title: "ການຄວບຄຸມການເຂົ້າເຖິງ",
       items: [
+        {
+          title: "ສື່",
+          url: "/app/media",
+          icon: FileIcon,
+        },
         {
           title: "ບົດບາດ",
           url: "/app/roles",

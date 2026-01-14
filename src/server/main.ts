@@ -25,39 +25,22 @@ export default app;
 //   });
 //   logger.info(`HTTP server running on :${env.PORT}`);
 
-//   // Start audit worker with a short interval; tie stop to close hook
-//   // Hybrid: keep polling as safety net (e.g., every 10s)
-//   auditWorker.start(10_000);
-
-//   // Ensure DB trigger exists
-//   await ensureOutboxNotifyTrigger().catch((e) =>
-//     logger.error("Ensure NOTIFY trigger failed", e),
-//   );
-
-//   // Ensure Timescale hypertable + policies (best effort)
-//   await ensureOutboxHypertable().catch((e) =>
-//     logger.error("Ensure Hypertable failed (Timescale)", e),
-//   );
-//   await ensureOutboxPolicies().catch((e) =>
-//     logger.error("Ensure Policies failed (Timescale)", e),
-//   );
-
-//   // Subscribe to LISTEN/NOTIFY and flush on demand (debounced)
-//   const listener = createOutboxListener(async () => {
+//   // Outbox service is automatically started when auditOutboxService is created
+//   // pg-transactional-outbox handles polling internally based on config
+//   // import { auditOutboxService } from "@/modules/audit/domain/workers/audit.worker";
+//   // import { closePgPool } from "@/server/shared/outbox/pg-client";
+//
+//   const onExit = async () => {
 //     try {
-//       await auditWorker.flushOnce();
+//       await auditOutboxService.shutdown();
 //     } catch (e) {
-//       logger.error("Outbox flush on notify failed", e);
+//       logger.error("Error shutting down audit outbox service", e);
 //     }
-//   });
-//   listener.start();
-//   const onExit = () => {
 //     try {
-//       auditWorker.stop();
-//     } catch {}
-//     try {
-//       listener.stop();
-//     } catch {}
+//       await closePgPool();
+//     } catch (e) {
+//       logger.error("Error closing pg pool", e);
+//     }
 //   };
 //   process.on("SIGINT", onExit);
 //   process.on("SIGTERM", onExit);

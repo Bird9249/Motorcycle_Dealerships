@@ -1,3 +1,4 @@
+import type { RoleDTO } from "@/modules/roles/presentation/api/client";
 import type {
   FilterConditionDTO,
   OffsetPageQueryDTO,
@@ -8,12 +9,8 @@ import {
   upsertCondition,
   upsertOrGroup,
 } from "@/shared/contracts/query-helpers";
-import type { RoleDTO } from "@/modules/roles/presentation/api/client";
 import { config } from "@/shared/lib/config";
-import {
-  fetchLookupForInfinite,
-  hydrateLookupItem,
-} from "@/shared/lib/utils";
+import { fetchLookupForInfinite, hydrateLookupItem } from "@/shared/lib/utils";
 import { InfiniteCombobox } from "@/shared/ui/InfiniteCombobox";
 import { SimpleSelect } from "@/shared/ui/SimpleSelect";
 import {
@@ -85,7 +82,7 @@ export function UsersFilter({ roles }: UsersFilterProps) {
     !!bannedValue;
 
   return (
-    <div className="mb-4 flex flex-col gap-2 px-2">
+    <div className="mb-4 flex flex-col gap-2 px-2" data-tourid="users-filter">
       <Tabs
         value={roleValue}
         onValueChange={(val) => {

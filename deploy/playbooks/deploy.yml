@@ -1,0 +1,89 @@
+- name: Deploy API server only
+  hosts: prod
+  become: true
+  vars_files:
+    - ../group_vars/prod.yml
+  vars:
+    release_id: "{{ ansible_date_time.epoch }}"
+  pre_tasks:
+    - name: Ensure base dirs exist (server-side)
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0755"
+      loop:
+        - "{{ server_releases }}"
+        - "{{ server_shared }}"
+        - "{{ server_shared }}/uploads"
+        - "{{ server_shared }}/uploads/media"
+  tasks:
+    - name: Assert server dist exists
+      run_once: true
+      delegate_to: localhost
+      become: false
+      stat: { path: "{{ local_server_dist }}" }
+      register: server_dist
+
+    - name: Fail if server dist missing
+      run_once: true
+      delegate_to: localhost
+      become: false
+      fail: { msg: "out/ missing - build failed" }
+      when: not server_dist.stat.exists
+
+    - name: Check if index.ts exists in server dist
+      run_once: true
+      delegate_to: localhost
+      become: false
+      stat: { path: "{{ local_server_dist }}/index.ts" }
+      register: index_ts
+
+    - name: Fail if index.ts missing
+      run_once: true
+      delegate_to: localhost
+      become: false
+      fail: { msg: "out/index.ts missing - build failed" }
+      when: not index_ts.stat.exists
+
+    - name: Check if worker.ts exists in server dist
+      run_once: true
+      delegate_to: localhost
+      become: false
+      stat: { path: "{{ local_server_dist }}/worker/worker.js" }
+      register: worker_ts
+
+    - name: Fail if worker.ts missing
+      run_once: true
+      delegate_to: localhost
+      become: false
+      fail: { msg: "out/worker.ts missing - build failed" }
+      when: not worker_ts.stat.exists
+
+    - name: Assert frontend dist exists
+      run_once: true
+      delegate_to: localhost
+      become: false
+      stat: { path: "{{ local_repo }}/out/dist" }
+      register: frontend_dist
+
+    - name: Fail if frontend dist missing
+      run_once: true
+      delegate_to: localhost
+      become: false
+      fail: { msg: "out/dist missing - build failed" }
+      when: not frontend_dist.stat.exists
+
+    - name: Include deploy unified tasks
+      include_tasks: ../roles/app/tasks/release_unified.yml
+
+    - name: Prune old server releases
+      shell: |
+        cd {{ server_releases }}
+        ls -1t | tail -n +{{ (keep_releases + 1) | int }} | xargs -r rm -rf
+      changed_when: false
+      failed_when: false
+
+
+

@@ -180,22 +180,24 @@ export function UsersTable({
 
   return (
     <>
-      <DataTable<UserRow, unknown>
-        noDataMessage="ບໍ່ພົບຜູ້ໃຊ້"
-        isLoading={isLoading}
-        columns={columns}
-        data={data}
-        offset={offset}
-        limit={limit}
-        totalCount={totalCount}
-        onPaginationChange={(p) => onPaginationChange(p.offset, p.limit)}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
-        onSortingChange={(sorting) => {
-          if (sorting[0]?.id === "") return;
-          onSortingChange(sorting[0]?.id as string, !!sorting[0]?.desc);
-        }}
-      />
+      <div data-tourid="users-table">
+        <DataTable<UserRow, unknown>
+          noDataMessage="ບໍ່ພົບຜູ້ໃຊ້"
+          isLoading={isLoading}
+          columns={columns}
+          data={data}
+          offset={offset}
+          limit={limit}
+          totalCount={totalCount}
+          onPaginationChange={(p) => onPaginationChange(p.offset, p.limit)}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortingChange={(sorting) => {
+            if (sorting[0]?.id === "") return;
+            onSortingChange(sorting[0]?.id as string, !!sorting[0]?.desc);
+          }}
+        />
+      </div>
 
       <Modal
         open={banModal.open}

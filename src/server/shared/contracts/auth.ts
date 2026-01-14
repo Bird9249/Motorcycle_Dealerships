@@ -1,5 +1,5 @@
+import { auth } from "@/modules/auth/domain/better-auth";
 import { z } from "zod";
-import { auth } from "../../modules/auth/better-auth";
 
 // Entities (domain shapes shared across apps)
 export const UserSchema = z.object({

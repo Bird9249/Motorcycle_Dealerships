@@ -12,16 +12,20 @@
     "@tanstack/react-router": "^1.141.6",
     "@tanstack/router-devtools": "^1.141.6",
     "better-auth": "1.4.7",
+    "browser-image-compression": "^2.0.2",
     "bun-plugin-tailwind": "^0.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns-tz": "^3.2.0",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.11.1",
     "lucide-react": "^0.561.0",
     "nanoid": "^5.1.6",
     "pg": "^8.16.3",
+    "pg-transactional-outbox": "^0.6.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-joyride": "^2.9.3",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.2.1",
     "zod-form-data": "^3.0.1"
@@ -40,7 +44,9 @@
   "private": true,
   "scripts": {
     "build": "bun run build.ts",
-    "compile": "bun build src/server/main.ts --outdir ./out --target bun",
+    "build:all": "bun run build.ts && bun run compile && bun run compile:worker",
+    "compile": "bun build src/server/main.ts --outdir ./out/server --target bun",
+    "compile:worker": "bun build src/server/worker.ts --outdir ./out/worker --target bun",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:pull": "drizzle-kit pull",
@@ -50,7 +56,8 @@
     "format": "biome format .",
     "lint": "biome check .",
     "rbac:sync": "bun run src/server/modules/rbac/scripts/sync.ts",
-    "start": "NODE_ENV=production bun index.ts"
+    "start": "NODE_ENV=production bun index.ts",
+    "worker": "WORKER_PORT=3001 bun run src/server/worker.ts"
   },
   "type": "module",
   "version": "0.1.0"

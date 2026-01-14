@@ -1,7 +1,7 @@
 import { serve } from "bun";
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import compliedApp from "./out/main.js";
+import compliedApp from "./out/server/main";
 
 // Helper function to find file with hash pattern in production
 function findHashedFile(baseName: string, extension: string) {
@@ -26,7 +26,7 @@ function findHashedFile(baseName: string, extension: string) {
   }
 
   // Fallback to original name if no hashed file found
-  return Bun.file(new URL(`../dist/${baseName}.${extension}`, import.meta.url));
+  return Bun.file(join(process.cwd(), "dist", `${baseName}.${extension}`));
 }
 
 // Helper function to serve static files from dist/

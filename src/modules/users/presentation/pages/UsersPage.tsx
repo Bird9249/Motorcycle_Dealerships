@@ -3,19 +3,10 @@ import { Main } from "@/app/layout/Main";
 import { useActionPermission } from "@/modules/auth/presentation/model/useActionPermission";
 import { USER_ROLES } from "@/modules/roles/domain/contracts/user-roles";
 import type { OffsetPageQueryDTO } from "@/shared/contracts/base";
-import { Modal, toast } from "@devhop/ui";
+import { toast } from "@devhop/ui";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-
-import { useDisclosure } from "@/shared/hooks/useDisclosure";
-// removed react-use to avoid dependency; useEffect with [] instead
-import { config } from "@/shared/lib/config";
-import {
-  useCreateUser,
-  useDeleteUser,
-  useUpdateUser,
-  useUsersQuery,
-} from "../api/queries";
-import { UserForm } from "../ui/UserForm";
+import { useDeleteUser, useUsersQuery } from "../api/queries";
+import { UsersTour, useUsersTour } from "../tour";
 import { UsersFilter } from "../ui/UsersFilter";
 import { UsersTable } from "../ui/UsersTable";
 import { UsersToolbar } from "../ui/UsersToolbar";
@@ -33,26 +24,19 @@ export function UsersPage() {
   const userRoles = Object.values(USER_ROLES);
 
   const canManage = useActionPermission(["users:create"]);
-  const createUser = useCreateUser();
   const deleteUser = useDeleteUser();
-  const editModal = useDisclosure<{
-    id: string;
-    email: string;
-    name: string;
-    roleId: string;
-    image?: string;
-  }>();
-  const updateUser = useUpdateUser(editModal.data?.id ?? "");
-  const createModal = useDisclosure();
-
-  // Filters are managed by UsersFilter component
+  const { run, handleJoyrideCallback, startTour } = useUsersTour();
 
   return (
     <>
       <Header />
 
       <Main>
-        <UsersToolbar canManage={!!canManage} onCreate={createModal.open} />
+        <UsersToolbar
+          canManage={!!canManage}
+          onCreate={() => nav({ to: "/app/users/create" })}
+          onStartTour={startTour}
+        />
 
         <div className="flex flex-col rounded-xl border bg-card pt-2">
           <UsersFilter roles={userRoles} />
@@ -79,13 +63,9 @@ export function UsersPage() {
               })
             }
             onEdit={(u) =>
-              editModal.openWith({
-                id: u.id,
-                email: u.email,
-                name: u.name ?? "",
-                roleId:
-                  u.roleIds && u.roleIds.length > 0 ? (u.roleIds[0] ?? "") : "",
-                image: u.image ? config.apiUrl + u.image : undefined,
+              nav({
+                to: "/app/users/$id/edit",
+                params: { id: u.id as string },
               })
             }
             onDelete={async (id) =>
@@ -98,43 +78,7 @@ export function UsersPage() {
           />
         </div>
 
-        <Modal
-          open={!!createModal.isOpen}
-          onOpenChange={createModal.toggle}
-          title="ສ້າງຜູ້ໃຊ້"
-          size="sm"
-        >
-          <UserForm
-            onSubmit={async (vals) => {
-              await createUser.mutateAsync({
-                ...vals,
-                imageFile: vals.imageFile || undefined,
-              });
-              createModal.close();
-            }}
-            submitting={createUser.isPending}
-          />
-        </Modal>
-
-        <Modal
-          open={!!editModal.isOpen}
-          onOpenChange={editModal.toggle}
-          title="ແກ້ໄຂຜູ້ໃຊ້"
-          size="sm"
-        >
-          <UserForm
-            initialValues={editModal.data ?? undefined}
-            onSubmit={async (vals) => {
-              await updateUser.mutateAsync({
-                ...vals,
-                image: vals.image || undefined,
-                imageFile: vals.imageFile,
-              });
-              editModal.close();
-            }}
-            submitting={updateUser.isPending}
-          />
-        </Modal>
+        <UsersTour run={run} onCallback={handleJoyrideCallback} />
       </Main>
     </>
   );

@@ -33,7 +33,7 @@ Do not include secrets, tokens, raw passwords, or unredacted PII anywhere.
 2. In the service that performs the mutation, build an AuditEvent with those values, an action string, entityType/entityId, result, and optional error.
 3. Provide before/after snapshots restricted to allowed fields per entityType (allowlist). If not available or unknown, omit.
 4. Append within the same DB transaction as the state change to ensure atomic write into `audit_outbox`.
-5. The shared outbox publisher (`src/shared/outbox/publisher.ts`) writes to `audit_outbox`; a worker flushes to `audit_logs` asynchronously.
+5. The outbox message storage (`src/server/shared/outbox/message-storage.ts`) writes to `outbox` table; pg-transactional-outbox service processes messages and flushes to `audit_logs` asynchronously.
 
 ### Integration patterns
 
@@ -52,7 +52,7 @@ Do not include secrets, tokens, raw passwords, or unredacted PII anywhere.
 
 ### Transactions, latency, and idempotency
 
-- Append into `audit_outbox` in the same DB transaction as the state change; this guarantees atomicity. The outbox write uses `bindOutboxPublisher` in `src/shared/outbox/publisher.ts`.
+- Append into `outbox` table in the same DB transaction as the state change; this guarantees atomicity. The outbox write uses `storeAuditOutboxMessage` from `src/server/shared/outbox/message-storage.ts`.
 - Appends are batched to minimize latency on the main path.
 - For idempotency, if calling from retryable flows, ensure a deterministic event identity upstream or let the worker handle duplicates safely when flushing.
 
