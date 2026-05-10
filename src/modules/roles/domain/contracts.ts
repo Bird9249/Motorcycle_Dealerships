@@ -51,4 +51,3 @@ export const RoleLookupQuerySchema = z.object({
   skip: z.coerce.number().int().min(0).default(0),
 });
 export type RoleLookupQueryDTO = z.infer<typeof RoleLookupQuerySchema>;
-

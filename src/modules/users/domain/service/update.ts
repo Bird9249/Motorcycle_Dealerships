@@ -21,8 +21,7 @@ export async function updateUserService(
 
   const imageChanged =
     nextImage !== (existing.image ?? undefined) ||
-    (input.image !== undefined &&
-      (input.image === null || input.image === ""));
+    (input.image !== undefined && (input.image === null || input.image === ""));
   const oldImageToDelete =
     imageChanged && existing.image ? existing.image : null;
 

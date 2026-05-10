@@ -1,10 +1,20 @@
 import { nowISO } from "@/shared/lib/date-time";
-import type { HonoContext } from "@/shared/types";
-import type { Context } from "hono";
 import type { AuditEvent, AuditResult } from "../audit.types";
 
+export interface AuditRequestContext {
+  requestId?: string;
+  traceId?: string;
+  ip?: string;
+  userAgent?: string;
+  tenantId?: string;
+  actorId?: string;
+  actorRole?: string;
+  path: string;
+  method: string;
+}
+
 export function buildAuditEvent(
-  c: Context<HonoContext>,
+  ctx: AuditRequestContext,
   params: {
     action: string;
     entityType?: string;
@@ -17,7 +27,15 @@ export function buildAuditEvent(
 ): AuditEvent {
   return {
     occurredAt: nowISO(),
-    ...getAuditContext(c),
+    requestId: ctx.requestId,
+    traceId: ctx.traceId,
+    tenantId: ctx.tenantId,
+    actorId: ctx.actorId,
+    actorRole: ctx.actorRole,
+    ip: ctx.ip,
+    userAgent: ctx.userAgent,
+    path: ctx.path,
+    method: ctx.method,
     action: params.action,
     entityType: params.entityType,
     entityId: params.entityId,
@@ -28,16 +46,28 @@ export function buildAuditEvent(
   };
 }
 
-export function getAuditContext(c: Context<HonoContext>): Partial<AuditEvent> {
+export function getAuditContextFromRequest(
+  request: Request,
+  ctx: {
+    requestId?: string;
+    traceId?: string;
+    ip?: string;
+    userAgent?: string;
+    tenantId?: string;
+    actorId?: string;
+    actorRole?: string;
+  },
+): AuditRequestContext {
+  const url = new URL(request.url);
   return {
-    requestId: c.get("requestId"),
-    traceId: c.get("traceId"),
-    tenantId: c.get("tenantId"),
-    actorId: c.get("actorId"),
-    actorRole: c.get("actorRole"),
-    ip: c.get("ip"),
-    userAgent: c.get("userAgent"),
-    path: c.req.path,
-    method: c.req.method,
+    requestId: ctx.requestId,
+    traceId: ctx.traceId,
+    ip: ctx.ip,
+    userAgent: ctx.userAgent,
+    tenantId: ctx.tenantId,
+    actorId: ctx.actorId,
+    actorRole: ctx.actorRole,
+    path: url.pathname,
+    method: request.method,
   };
 }

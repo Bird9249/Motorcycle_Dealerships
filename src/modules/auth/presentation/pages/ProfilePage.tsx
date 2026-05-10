@@ -37,7 +37,8 @@ export function ProfilePage() {
               onSubmit={async (vals) => {
                 setSubmitting(true);
                 try {
-                  let imageKey: string | null | undefined = vals.image ?? undefined;
+                  let imageKey: string | null | undefined =
+                    vals.image ?? undefined;
                   if (vals.imageFile instanceof File) {
                     imageKey = await uploadAvatarFile(vals.imageFile);
                   }
@@ -46,10 +47,7 @@ export function ProfilePage() {
                   if (vals.password) fd.append("password", vals.password);
                   if (vals.image === null && !vals.imageFile) {
                     fd.append("imageDelete", "1");
-                  } else if (
-                    typeof imageKey === "string" &&
-                    imageKey
-                  ) {
+                  } else if (typeof imageKey === "string" && imageKey) {
                     fd.append("image", imageKey);
                   }
                   await profileApi.update(fd);

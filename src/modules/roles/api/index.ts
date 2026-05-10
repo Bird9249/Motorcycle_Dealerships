@@ -1,13 +1,11 @@
-import type { HonoContext } from "@/shared/types";
-import type { Hono } from "hono";
-import { registerRbacRoutes } from "../domain/http/rbac.routes";
-import { requireAuth } from "../domain/http/middleware";
+import { Elysia } from "elysia";
+import { requireAuth } from "@/modules/roles/domain/http/middleware";
+import { serverContext } from "@/server/platform/http/context";
+import { rbacRoutes } from "../domain/http/rbac.routes";
 
-export function registerRolesAPIRoutes(app: Hono<HonoContext>) {
-  // protect API namespaces by default; concrete permissions handled in routes
-  app.use("/rbac/*", requireAuth());
-
-  app.route("/rbac", registerRbacRoutes());
-
-  return app;
-}
+export const rolesRoutes = new Elysia().use(
+  new Elysia({ prefix: "/rbac" })
+    .use(serverContext)
+    .onBeforeHandle(requireAuth)
+    .use(rbacRoutes),
+);

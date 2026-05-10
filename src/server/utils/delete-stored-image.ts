@@ -6,7 +6,9 @@ import { deleteObjectFromS3 } from "./s3-delete-object";
  * - ถ้า imageUrl ขึ้นต้นด้วย /public/ → ลบผ่าน bunFileStorage (local)
  * - มิฉะนั้นถือว่าเป็น key ใน MinIO → ลบผ่าน S3
  */
-export async function deleteStoredImage(imageUrl: string | null): Promise<void> {
+export async function deleteStoredImage(
+  imageUrl: string | null,
+): Promise<void> {
   if (!imageUrl || typeof imageUrl !== "string" || imageUrl.trim() === "") {
     return;
   }

@@ -1,0 +1,5 @@
+interface:
+  display_name: "shadcn/ui"
+  short_description: "shadcn patterns for Admin: import from @devhop/ui; use shadcn CLI for docs/reference only, not add-to-repo."
+  icon_small: "./assets/shadcn-small.png"
+  icon_large: "./assets/shadcn.png"

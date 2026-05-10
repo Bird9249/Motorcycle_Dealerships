@@ -1,14 +1,9 @@
+import { Elysia } from "elysia";
+import { z } from "zod";
 import { requirePermission } from "@/modules/roles/domain/http/middleware";
+import { serverContext } from "@/server/platform/http/context";
 import { OffsetPageQuerySchema } from "@/shared/contracts/base";
-import type { HonoContext } from "@/shared/types";
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
-import {
-  BanUserSchema,
-  CreateUserFormSchema,
-  IdParamSchema,
-  UpdateUserFormSchema,
-} from "../contracts";
+import { BanUserSchema, IdParamSchema } from "../contracts";
 import { getUserById } from "../repo/get-by-id";
 import { listUsers } from "../repo/list";
 import { banUserService } from "../service/ban";
@@ -17,146 +12,150 @@ import { deleteUserService } from "../service/delete";
 import { unbanUserService } from "../service/unban";
 import { updateUserService } from "../service/update";
 
-export function registerUsersRoutes() {
-  const r = new Hono<HonoContext>();
+const CreateUserBody = z.object({
+  email: z.string().email(),
+  name: z.string().min(1),
+  image: z.string().optional(),
+  password: z.string().min(1).optional(),
+  roleId: z.string().min(1).optional(),
+});
 
-  r.get(
+const UpdateUserBody = z.object({
+  email: z.string().email().optional(),
+  name: z.string().min(1).optional(),
+  image: z.string().optional(),
+  imageDelete: z.string().optional(),
+  roleId: z.string().min(1).optional(),
+  password: z.string().optional(),
+});
+
+export const usersRoutes = new Elysia()
+  .use(serverContext)
+  .get(
     "/",
-    requirePermission("users:read"),
-    zValidator("query", OffsetPageQuerySchema),
-    async (c) => {
-      const client = c.get("db");
-      const q = c.req.valid("query");
-      const result = await listUsers(q, client);
-      return c.json(result);
+    async ({ db, query }) => {
+      return await listUsers(query, db);
     },
-  );
-
-  r.get(
+    {
+      beforeHandle: requirePermission("users:read"),
+      query: OffsetPageQuerySchema,
+    },
+  )
+  .get(
     "/:id",
-    requirePermission("users:read"),
-    zValidator("param", IdParamSchema),
-    async (c) => {
-      const client = c.get("db");
-      const { id } = c.req.valid("param");
-      const user = await getUserById(id, client);
-      if (!user) return c.json({ error: "NOT_FOUND" }, 404);
-      return c.json(user);
+    async ({ db, params, status }) => {
+      const user = await getUserById(params.id, db);
+      if (!user) return status(404, { error: "NOT_FOUND" });
+      return user;
     },
-  );
-
-  r.post(
+    {
+      beforeHandle: requirePermission("users:read"),
+      params: IdParamSchema,
+    },
+  )
+  .post(
     "/",
-    requirePermission("users:create"),
-    zValidator("form", CreateUserFormSchema),
-    async (c) => {
-      const client = c.get("db");
-      const input = c.req.valid("form");
+    async ({ db, body, status }) => {
       try {
-        const out = await createUserService(client, {
+        const out = await createUserService(db, {
           input: {
-            email: input.email,
-            name: input.name,
-            password: input.password,
-            roleId: input.roleId,
-            image: input.image ?? undefined,
+            email: body.email,
+            name: body.name,
+            password: body.password,
+            roleId: body.roleId,
+            image: body.image ?? undefined,
           },
         });
-        return c.json(out.created, 201);
+        return status(201, out.created);
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
-        return c.json({ error: message }, 500);
+        return status(500, { error: message });
       }
     },
-  );
-
-  r.put(
+    {
+      beforeHandle: requirePermission("users:create"),
+      body: CreateUserBody,
+    },
+  )
+  .put(
     "/:id",
-    requirePermission("users:update"),
-    zValidator("param", IdParamSchema),
-    zValidator("form", UpdateUserFormSchema),
-    async (c) => {
-      const client = c.get("db");
-      const { id } = c.req.valid("param");
-      const input = c.req.valid("form");
+    async ({ db, params, body, status }) => {
       try {
-        const { updated } = await updateUserService(client, {
-          id,
+        const { updated } = await updateUserService(db, {
+          id: params.id,
           input: {
-            email: input.email,
-            name: input.name,
-            roleId: input.roleId,
-            password: input.password,
-            image: input.imageDelete ? null : (input.image ?? undefined),
+            email: body.email,
+            name: body.name,
+            roleId: body.roleId,
+            password: body.password,
+            image: body.imageDelete ? null : (body.image ?? undefined),
           },
         });
-        return c.json(updated);
+        return updated;
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
         if (message === "User not found")
-          return c.json({ error: "NOT_FOUND" }, 404);
-        return c.json({ error: message }, 500);
+          return status(404, { error: "NOT_FOUND" });
+        return status(500, { error: message });
       }
     },
-  );
-
-  r.delete(
+    {
+      beforeHandle: requirePermission("users:update"),
+      params: IdParamSchema,
+      body: UpdateUserBody,
+    },
+  )
+  .delete(
     "/:id",
-    requirePermission("users:delete"),
-    zValidator("param", IdParamSchema),
-    async (c) => {
-      const client = c.get("db");
-      const { id } = c.req.valid("param");
+    async ({ db, params, status }) => {
       try {
-        const { deleted } = await deleteUserService(client, { id });
-        if (!deleted) return c.json({ error: "NOT_FOUND" }, 404);
-        return c.json(deleted);
+        const { deleted } = await deleteUserService(db, { id: params.id });
+        if (!deleted) return status(404, { error: "NOT_FOUND" });
+        return deleted;
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
-        return c.json({ error: message }, 500);
+        return status(500, { error: message });
       }
     },
-  );
-
-  r.post(
+    {
+      beforeHandle: requirePermission("users:delete"),
+      params: IdParamSchema,
+    },
+  )
+  .post(
     "/:id/ban",
-    requirePermission("users:ban"),
-    zValidator("param", IdParamSchema),
-    zValidator("json", BanUserSchema),
-    async (c) => {
-      const client = c.get("db");
-      const { id } = c.req.valid("param");
-      const body = c.req.valid("json");
+    async ({ db, params, body, status }) => {
       try {
-        const result = await banUserService(client, {
-          id,
+        const result = await banUserService(db, {
+          id: params.id,
           reason: body.reason ?? undefined,
           expires: body.expires ?? null,
         });
-        return c.json(result);
+        return result;
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
-        return c.json({ error: message }, 500);
+        return status(500, { error: message });
       }
     },
-  );
-
-  r.post(
+    {
+      beforeHandle: requirePermission("users:ban"),
+      params: IdParamSchema,
+      body: BanUserSchema,
+    },
+  )
+  .post(
     "/:id/unban",
-    requirePermission("users:ban"),
-    zValidator("param", IdParamSchema),
-    async (c) => {
-      const client = c.get("db");
-      const { id } = c.req.valid("param");
+    async ({ db, params, status }) => {
       try {
-        const result = await unbanUserService(client, { id });
-        return c.json(result);
+        const result = await unbanUserService(db, { id: params.id });
+        return result;
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
-        return c.json({ error: message }, 500);
+        return status(500, { error: message });
       }
     },
+    {
+      beforeHandle: requirePermission("users:ban"),
+      params: IdParamSchema,
+    },
   );
-
-  return r;
-}

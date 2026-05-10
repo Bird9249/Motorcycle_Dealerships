@@ -1,12 +1,19 @@
+import { Elysia } from "elysia";
 import { requireAuth } from "@/modules/roles/domain/http/middleware";
-import type { HonoContext } from "@/shared/types";
-import type { Hono } from "hono";
-import { registerFileRoutes } from "../domain/http/files.routes";
-import { registerUploadRoutes } from "../domain/http/upload.routes";
+import { serverContext } from "@/server/platform/http/context";
+import { fileRoutes } from "../domain/http/files.routes";
+import { uploadDetailRoutes } from "../domain/http/upload.routes";
 
-export function registerUploadAPIRoutes(app: Hono<HonoContext>) {
-  app.use("/upload/*", requireAuth());
-  app.use("/files/*", requireAuth());
-  app.route("/upload", registerUploadRoutes());
-  app.route("/files", registerFileRoutes());
-}
+export const uploadRoutes = new Elysia()
+  .use(
+    new Elysia({ prefix: "/upload" })
+      .use(serverContext)
+      .onBeforeHandle(requireAuth)
+      .use(uploadDetailRoutes),
+  )
+  .use(
+    new Elysia({ prefix: "/files" })
+      .use(serverContext)
+      .onBeforeHandle(requireAuth)
+      .use(fileRoutes),
+  );

@@ -1,3 +1,5 @@
+import { Elysia } from "elysia";
+import { serverContext } from "@/server/platform/http/context";
 import {
   abortMultipartUpload,
   completeMultipartUpload,
@@ -12,112 +14,79 @@ import {
   MultipartPresignPartsSchema,
   PresignUploadSchema,
 } from "@/shared/contracts/upload";
-import type { HonoContext } from "@/shared/types";
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
 
-export function registerUploadRoutes() {
-  const r = new Hono<HonoContext>();
-
-  /**
-   * ขอ presigned PUT URL สำหรับอัปโหลดไฟล์จาก frontend ไป MinIO โดยตรง
-   * POST body: { key: string, contentType?: string, expiresIn?: number }
-   * Response: { uploadUrl: string, key: string }
-   */
-  r.post("/presign", zValidator("json", PresignUploadSchema), async (c) => {
-    const input = c.req.valid("json");
-    const result = await getPresignedUploadUrl({
-      key: input.key,
-      contentType: input.contentType,
-      expiresIn: input.expiresIn,
-    });
-    if (!result) {
-      return c.json(
-        { error: "Object store (S3/MinIO) is not configured" },
-        503,
-      );
-    }
-    return c.json(result, 200);
-  });
-
-  // --- Multipart (chunk) upload สำหรับไฟล์ขนาดใหญ่ ---
-
-  /** เริ่ม multipart upload → ได้ uploadId */
-  r.post(
+export const uploadDetailRoutes = new Elysia()
+  .use(serverContext)
+  .post(
+    "/presign",
+    async ({ body, status }) => {
+      const result = await getPresignedUploadUrl({
+        key: body.key,
+        contentType: body.contentType,
+        expiresIn: body.expiresIn,
+      });
+      if (!result)
+        return status(503, {
+          error: "Object store (S3/MinIO) is not configured",
+        });
+      return result;
+    },
+    { body: PresignUploadSchema },
+  )
+  .post(
     "/multipart/init",
-    zValidator("json", MultipartInitSchema),
-    async (c) => {
-      const input = c.req.valid("json");
-      const result = await createMultipartUpload(input.key, input.contentType);
-      if (!result) {
-        return c.json(
-          { error: "Object store (S3/MinIO) is not configured" },
-          503,
-        );
-      }
-      return c.json(result, 200);
+    async ({ body, status }) => {
+      const result = await createMultipartUpload(body.key, body.contentType);
+      if (!result)
+        return status(503, {
+          error: "Object store (S3/MinIO) is not configured",
+        });
+      return result;
     },
-  );
-
-  /** ขอ presigned URL สำหรับแต่ละ part */
-  r.post(
+    { body: MultipartInitSchema },
+  )
+  .post(
     "/multipart/presign-parts",
-    zValidator("json", MultipartPresignPartsSchema),
-    async (c) => {
-      const input = c.req.valid("json");
+    async ({ body, status }) => {
       const parts = await getPresignedPartUrls(
-        input.key,
-        input.uploadId,
-        input.partNumbers,
-        input.expiresIn,
+        body.key,
+        body.uploadId,
+        body.partNumbers,
+        body.expiresIn,
       );
-      if (!parts) {
-        return c.json(
-          { error: "Object store (S3/MinIO) is not configured" },
-          503,
-        );
-      }
-      return c.json({ parts }, 200);
+      if (!parts)
+        return status(503, {
+          error: "Object store (S3/MinIO) is not configured",
+        });
+      return { parts };
     },
-  );
-
-  /** รวม parts เป็น object (complete) */
-  r.post(
+    { body: MultipartPresignPartsSchema },
+  )
+  .post(
     "/multipart/complete",
-    zValidator("json", MultipartCompleteSchema),
-    async (c) => {
-      const input = c.req.valid("json");
+    async ({ body, status }) => {
       const result = await completeMultipartUpload(
-        input.key,
-        input.uploadId,
-        input.parts,
+        body.key,
+        body.uploadId,
+        body.parts,
       );
-      if (!result) {
-        return c.json(
-          { error: "Object store (S3/MinIO) is not configured" },
-          503,
-        );
-      }
-      return c.json(result, 200);
+      if (!result)
+        return status(503, {
+          error: "Object store (S3/MinIO) is not configured",
+        });
+      return result;
     },
-  );
-
-  /** ยกเลิก multipart upload */
-  r.post(
+    { body: MultipartCompleteSchema },
+  )
+  .post(
     "/multipart/abort",
-    zValidator("json", MultipartAbortSchema),
-    async (c) => {
-      const input = c.req.valid("json");
-      const ok = await abortMultipartUpload(input.key, input.uploadId);
-      if (!ok) {
-        return c.json(
-          { error: "Object store (S3/MinIO) is not configured" },
-          503,
-        );
-      }
-      return c.json({ ok: true }, 200);
+    async ({ body, status }) => {
+      const ok = await abortMultipartUpload(body.key, body.uploadId);
+      if (!ok)
+        return status(503, {
+          error: "Object store (S3/MinIO) is not configured",
+        });
+      return { ok: true };
     },
+    { body: MultipartAbortSchema },
   );
-
-  return r;
-}

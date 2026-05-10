@@ -6,7 +6,9 @@ import { deleteObjectFromS3 } from "./s3-delete-object";
  * - ค่าเป็น key (เช่น uploads/avatars/xxx.jpg) → ลบจาก S3
  * - ค่าเป็น path/URL แบบเก่า (ขึ้นต้นด้วย / หรือ http) → ลบจาก local storage
  */
-export async function deleteUserImage(value: string | null | undefined): Promise<void> {
+export async function deleteUserImage(
+  value: string | null | undefined,
+): Promise<void> {
   if (!value || typeof value !== "string" || value.trim() === "") return;
   const s = value.trim();
   const isLegacyUrl =

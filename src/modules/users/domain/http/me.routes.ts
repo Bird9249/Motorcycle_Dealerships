@@ -1,46 +1,47 @@
-import type { HonoContext } from "@/shared/types";
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
-import { UpdateUserFormSchema } from "../contracts";
+import { Elysia } from "elysia";
+import { z } from "zod";
+import { serverContext } from "@/server/platform/http/context";
 import { getUserById } from "../repo/get-by-id";
 import { updateUserService } from "../service/update";
 
-export function registerMeRoutes() {
-  const r = new Hono<HonoContext>();
+const UpdateMeBody = z.object({
+  email: z.string().email().optional(),
+  name: z.string().min(1).optional(),
+  image: z.string().optional(),
+  imageDelete: z.string().optional(),
+  password: z.string().optional(),
+});
 
-  r.get("/", async (c) => {
-    const authUser = c.get("user");
-    if (!authUser) return c.json({ error: "UNAUTHORIZED" }, 401);
-    const client = c.get("db");
-    const user = await getUserById(authUser.id, client);
-    if (!user) return c.json({ error: "NOT_FOUND" }, 404);
-    return c.json({ user });
-  });
-
-  r.put("/", zValidator("form", UpdateUserFormSchema), async (c) => {
-    const authUser = c.get("user");
-    if (!authUser) return c.json({ error: "UNAUTHORIZED" }, 401);
-    const input = c.req.valid("form");
-    const client = c.get("db");
-    try {
-      const { updated } = await updateUserService(client, {
-        id: authUser.id,
-        input: {
-          email: input.email,
-          name: input.name,
-          password: input.password,
-          roleId: undefined,
-          image: input.imageDelete ? null : (input.image ?? undefined),
-        },
-      });
-      return c.json({ user: updated });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      if (message === "User not found")
-        return c.json({ error: "NOT_FOUND" }, 404);
-      return c.json({ error: message }, 500);
-    }
-  });
-
-  return r;
-}
+export const meRoutes = new Elysia()
+  .use(serverContext)
+  .get("/", async ({ user, db, status }) => {
+    if (!user) return status(401, { error: "UNAUTHORIZED" });
+    const u = await getUserById(user.id, db);
+    if (!u) return status(404, { error: "NOT_FOUND" });
+    return { user: u };
+  })
+  .put(
+    "/",
+    async ({ user, db, body, status }) => {
+      if (!user) return status(401, { error: "UNAUTHORIZED" });
+      try {
+        const { updated } = await updateUserService(db, {
+          id: user.id,
+          input: {
+            email: body.email,
+            name: body.name,
+            password: body.password,
+            roleId: undefined,
+            image: body.imageDelete ? null : (body.image ?? undefined),
+          },
+        });
+        return { user: updated };
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        if (message === "User not found")
+          return status(404, { error: "NOT_FOUND" });
+        return status(500, { error: message });
+      }
+    },
+    { body: UpdateMeBody },
+  );

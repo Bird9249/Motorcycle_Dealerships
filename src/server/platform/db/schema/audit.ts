@@ -4,7 +4,10 @@ export const auditLogs = pgTable(
   "audit_logs",
   {
     id: text("id").primaryKey(),
-    occurredAt: timestamp("occurred_at", { withTimezone: true, mode: "date" }).notNull(),
+    occurredAt: timestamp("occurred_at", {
+      withTimezone: true,
+      mode: "date",
+    }).notNull(),
     requestId: text("request_id"),
     traceId: text("trace_id"),
     tenantId: text("tenant_id"),
@@ -30,5 +33,5 @@ export const auditLogs = pgTable(
     index("audit_logs_by_tenant_time").on(t.tenantId, t.occurredAt),
     index("audit_logs_by_entity").on(t.entityType, t.entityId),
     index("audit_logs_by_action").on(t.action),
-  ]
+  ],
 );

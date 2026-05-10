@@ -3,12 +3,12 @@ import { Main } from "@/app/layout/Main";
 import { formatDateTimeLocal } from "@/shared/lib/date-time";
 import { QueryState } from "@/shared/ui/QueryState";
 import {
-    Badge,
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
 } from "@devhop/ui";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { ArrowLeftIcon } from "lucide-react";

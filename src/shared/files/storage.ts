@@ -14,7 +14,7 @@ export async function ensurePublicDir(subdir?: string) {
 
 export async function saveUploadedFile(
   file: File,
-  subdir = ""
+  subdir = "",
 ): Promise<{ path: string; url: string; filename: string }> {
   const dir = await ensurePublicDir(subdir);
   const ext = extname(file.name || "");

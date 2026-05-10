@@ -1,11 +1,11 @@
 import { toISOForAPI } from "@/shared/lib/date-time";
 import {
-    Button,
-    FormDatePicker,
-    FormRoot,
-    FormTextarea,
-    RHF,
-    zodResolver,
+  Button,
+  FormDatePicker,
+  FormRoot,
+  FormTextarea,
+  RHF,
+  zodResolver,
 } from "@devhop/ui";
 import { z } from "zod";
 
@@ -31,12 +31,12 @@ export function BanUserForm({
   return (
     <FormRoot<BanFormValues>
       methods={methods}
-onSubmit={(vals) =>
-          onSubmit({
-            reason: vals.reason || undefined,
-            expires: toISOForAPI(vals.expires),
-          })
-        }
+      onSubmit={(vals) =>
+        onSubmit({
+          reason: vals.reason || undefined,
+          expires: toISOForAPI(vals.expires),
+        })
+      }
       className="space-y-3"
     >
       <FormTextarea

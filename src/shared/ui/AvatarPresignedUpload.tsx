@@ -79,9 +79,7 @@ export function AvatarPresignedUpload({
 
   return (
     <div className={`space-y-2 ${className ?? ""}`}>
-      {label && (
-        <div className="mb-2 block text-sm font-medium">{label}</div>
-      )}
+      {label && <div className="mb-2 block text-sm font-medium">{label}</div>}
       <div className="flex flex-wrap items-start gap-4">
         <div className="relative size-20 shrink-0 overflow-hidden rounded-full border bg-muted">
           <AppImage
@@ -130,12 +128,8 @@ export function AvatarPresignedUpload({
               </Button>
             )}
           </div>
-          {hint && (
-            <p className="text-muted-foreground text-sm">{hint}</p>
-          )}
-          {error && (
-            <p className="text-destructive text-sm">{error}</p>
-          )}
+          {hint && <p className="text-muted-foreground text-sm">{hint}</p>}
+          {error && <p className="text-destructive text-sm">{error}</p>}
         </div>
       </div>
     </div>

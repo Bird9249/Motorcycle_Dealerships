@@ -1,13 +1,11 @@
+import { Elysia } from "elysia";
 import { requireAuth } from "@/modules/roles/domain/http/middleware";
-import type { HonoContext } from "@/shared/types";
-import type { Hono } from "hono";
-import { registerAuditRoutes } from "../domain/http/audit.routes";
+import { serverContext } from "@/server/platform/http/context";
+import { auditDetailRoutes } from "../domain/http/audit.routes";
 
-export function registerAuditAPIRoutes(app: Hono<HonoContext>) {
-  // protect API namespaces by default; concrete permissions handled in routes
-  app.use("/audit/*", requireAuth());
-
-  app.route("/audit", registerAuditRoutes());
-
-  return app;
-}
+export const auditRoutes = new Elysia().use(
+  new Elysia({ prefix: "/audit" })
+    .use(serverContext)
+    .onBeforeHandle(requireAuth)
+    .use(auditDetailRoutes),
+);

@@ -1,18 +1,15 @@
-import { registerAuditAPIRoutes } from "@/modules/audit/api";
-import { registerAuthRoutes } from "@/modules/auth/api";
-import { registerRolesAPIRoutes } from "@/modules/roles/api";
-import { registerUploadAPIRoutes } from "@/modules/upload/api";
-import { registerUsersAPIRoutes } from "@/modules/users/api";
-import type { HonoContext } from "@/shared/types";
-import type { Hono } from "hono";
+import { Elysia } from "elysia";
+import { auditRoutes } from "@/modules/audit/api";
+import { authRoutes } from "@/modules/auth/api";
+import { rolesRoutes } from "@/modules/roles/api";
+import { uploadRoutes } from "@/modules/upload/api";
+import { usersRoutes } from "@/modules/users/api";
 
-export function registerRest(app: Hono<HonoContext>) {
-  // Register all module API routes
-  registerAuthRoutes(app);
-  registerUsersAPIRoutes(app);
-  registerRolesAPIRoutes(app);
-  registerAuditAPIRoutes(app);
-  registerUploadAPIRoutes(app);
-
-  return app;
+export function createRestRoutes() {
+  return new Elysia()
+    .use(authRoutes)
+    .use(usersRoutes)
+    .use(rolesRoutes)
+    .use(auditRoutes)
+    .use(uploadRoutes);
 }
