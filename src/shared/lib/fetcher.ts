@@ -1,4 +1,4 @@
-import { confirm, toast } from "@devhop/ui";
+import { confirm, toast } from "@/components/kit";
 
 type ApiErrorShape = { message?: string; error?: string } | null;
 

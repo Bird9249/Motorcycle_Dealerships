@@ -1,3 +1,6 @@
+import { Link, useLocation } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
 import {
   Badge,
   Collapsible,
@@ -18,10 +21,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from "@devhop/ui";
-import { Link, useLocation } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
-import type { ReactNode } from "react";
+} from "@/components/kit";
 import { usePermissions } from "@/modules/auth/presentation/model/usePermissions";
 import type {
   NavCollapsible,

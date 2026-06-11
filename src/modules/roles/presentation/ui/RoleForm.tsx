@@ -1,13 +1,6 @@
-import type {
-  RoleCreateInput,
-  RoleUpdateInput,
-} from "@/modules/roles/domain/contracts";
-import type { PermissionId } from "@/modules/roles/domain/contracts/permissions";
-import {
-  Permissions,
-  getActionLabel,
-  getResourceLabel,
-} from "@/modules/roles/domain/contracts/permissions";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { z } from "zod";
 import {
   Badge,
   Button,
@@ -15,6 +8,11 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FieldDescription,
+  FieldGroup,
+  FieldLegend,
+  FieldSet,
+  FormActions,
   FormInput,
   FormRoot,
   FormTextarea,
@@ -23,10 +21,17 @@ import {
   ScrollArea,
   useDebounceCallback,
   zodResolver,
-} from "@devhop/ui";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { z } from "zod";
+} from "@/components/kit";
+import type {
+  RoleCreateInput,
+  RoleUpdateInput,
+} from "@/modules/roles/domain/contracts";
+import type { PermissionId } from "@/modules/roles/domain/contracts/permissions";
+import {
+  getActionLabel,
+  getResourceLabel,
+  Permissions,
+} from "@/modules/roles/domain/contracts/permissions";
 
 const RoleFormSchema = z.object({
   name: z.string().min(1, "Required"),
@@ -113,7 +118,6 @@ export function RoleForm({
           permissions: vals.permissions as PermissionId[],
         })
       }
-      className="space-y-4"
     >
       <div data-tourid="form-name">
         <FormInput
@@ -130,20 +134,18 @@ export function RoleForm({
           placeholder="ຕົວຢ່າງ: ບົດບາດ Admin ທີ່ສາມາດເຂົ້າເຖິງທຸກຟີຈເຈີ"
         />
       </div>
-      <div>
-        <div className="mb-2 block text-sm">ສິດທິ</div>
-        <div className="mb-3" data-tourid="form-permissions-search">
+      <FieldSet data-tourid="form-permissions">
+        <FieldLegend variant="label">ສິດທິ</FieldLegend>
+        <FieldDescription>ເລືອກສິດທີ່ບົດບາດນີ້ສາມາດໃຊ້ໄດ້</FieldDescription>
+        <div className="mb-1" data-tourid="form-permissions-search">
           <Input
             placeholder="ຄົ້ນຫາສິດທິ..."
             onChange={(e) => debouncedSearch(e.target.value)}
             className="w-full"
           />
         </div>
-        <ScrollArea
-          className="max-h-96 overflow-auto rounded-md border p-4"
-          data-tourid="form-permissions"
-        >
-          <div className="space-y-3 pr-1">
+        <ScrollArea className="max-h-96 overflow-auto rounded-md border p-4">
+          <FieldGroup className="gap-3 pr-1">
             {filteredPermissions.map(([resource, actions]) => {
               const groupIds = Object.values(actions) as string[];
               const allChecked = groupIds.every((id) => selected?.includes(id));
@@ -231,14 +233,14 @@ export function RoleForm({
                 ບໍ່ພົບສິດທິທີ່ຕົງກັບການຄົ້ນຫາ
               </div>
             )}
-          </div>
+          </FieldGroup>
         </ScrollArea>
-      </div>
-      <div className="flex justify-end gap-2" data-tourid="form-submit">
-        <Button type="submit" disabled={submitting}>
+      </FieldSet>
+      <FormActions data-tourid="form-submit">
+        <Button type="submit" isLoading={submitting}>
           ບັນທຶກ
         </Button>
-      </div>
+      </FormActions>
     </FormRoot>
   );
 }

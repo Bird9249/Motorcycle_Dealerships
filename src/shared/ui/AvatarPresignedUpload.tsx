@@ -1,8 +1,8 @@
-import { uploadApi } from "@/shared/lib/upload-api";
-import { uploadFileToPresignedUrl } from "@/shared/lib/upload-to-presigned";
-import { Button } from "@devhop/ui";
 import { Loader2, Trash2, Upload } from "lucide-react";
 import { useCallback, useId, useState } from "react";
+import { Button } from "@/components/kit";
+import { uploadApi } from "@/shared/lib/upload-api";
+import { uploadFileToPresignedUrl } from "@/shared/lib/upload-to-presigned";
 import { AppImage } from "./AppImage";
 
 function sanitizeFilename(name: string): string {

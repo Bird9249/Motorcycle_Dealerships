@@ -1,10 +1,10 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/components/kit";
 import type {
   CreateUserFormDTO,
   UpdateUserFormDTO,
 } from "@/modules/users/domain/contracts";
 import type { OffsetPageQueryDTO } from "@/shared/contracts/base";
-import { toast } from "@devhop/ui";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { usersApi } from "./client";
 
 export const usersKeys = {

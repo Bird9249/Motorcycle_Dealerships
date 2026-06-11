@@ -1,3 +1,7 @@
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { Check, ChevronsUpDown } from "lucide-react";
+import React, { useRef } from "react";
 import {
   Button,
   Command,
@@ -6,16 +10,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  cn,
   Popover,
   PopoverContent,
   PopoverTrigger,
-  cn,
   useDebounceCallback,
-} from "@devhop/ui";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { Check, ChevronsUpDown } from "lucide-react";
-import React, { useRef } from "react";
+} from "@/components/kit";
 
 interface InfiniteComboboxProps<T> {
   queryKey: Array<string>;

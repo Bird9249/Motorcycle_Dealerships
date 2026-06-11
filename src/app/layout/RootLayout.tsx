@@ -1,6 +1,7 @@
-import { Confirmer, Toaster } from "@devhop/ui";
 import { Outlet } from "@tanstack/react-router";
 import { useState } from "react";
+import { Confirmer, Toaster } from "@/components/kit";
+import { NotificationProvider } from "../providers/NotificationProvider";
 import { ThemeProvider } from "../providers/ThemeProvider";
 import { UpdateBanner } from "./UpdateBanner";
 
@@ -13,12 +14,14 @@ export function RootLayout() {
       defaultTheme="system"
       storageKey="ui-theme"
     >
-      <UpdateBanner onVisibilityChange={setBannerVisible} />
-      <div className={`min-h-screen ${bannerVisible ? "pt-16" : ""}`}>
-        <Outlet />
-      </div>
-      <Confirmer />
-      <Toaster richColors />
+      <NotificationProvider>
+        <UpdateBanner onVisibilityChange={setBannerVisible} />
+        <div className={`min-h-screen ${bannerVisible ? "pt-16" : ""}`}>
+          <Outlet />
+        </div>
+        <Confirmer />
+        <Toaster richColors />
+      </NotificationProvider>
     </ThemeProvider>
   );
 }

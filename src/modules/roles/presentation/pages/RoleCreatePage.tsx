@@ -1,9 +1,9 @@
-import { Header } from "@/app/layout/Header";
-import { Main } from "@/app/layout/Main";
-import type { PermissionId } from "@/modules/roles/domain/contracts/permissions";
-import { Button, toast } from "@devhop/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeftIcon, HelpCircleIcon } from "lucide-react";
+import { Header } from "@/app/layout/Header";
+import { Main } from "@/app/layout/Main";
+import { Button, toast } from "@/components/kit";
+import type { PermissionId } from "@/modules/roles/domain/contracts/permissions";
 import { useCreateRole } from "../api/queries";
 import { RoleFormTour, useRoleFormTour } from "../tour";
 import { RoleForm } from "../ui/RoleForm";

@@ -1,7 +1,7 @@
+import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
+import { ArrowLeftIcon } from "lucide-react";
 import { Header } from "@/app/layout/Header";
 import { Main } from "@/app/layout/Main";
-import { formatDateTimeLocal } from "@/shared/lib/date-time";
-import { QueryState } from "@/shared/ui/QueryState";
 import {
   Badge,
   Button,
@@ -9,9 +9,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@devhop/ui";
-import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
-import { ArrowLeftIcon } from "lucide-react";
+} from "@/components/kit";
+import { formatDateTimeLocal } from "@/shared/lib/date-time";
+import { QueryState } from "@/shared/ui/QueryState";
 import type { AuditDetail } from "../api/client";
 import { useAuditDetail } from "../api/queries";
 

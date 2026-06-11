@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@source "../node_modules/@devhop/ui/**/*.{js,jsx,ts,tsx,mjs,cjs}";
-
 @font-face {
   font-family: "Noto Sans Lao Looped";
   src:

@@ -5,11 +5,11 @@
  * It is included in `src/index.html`.
  */
 
-import { confirm } from "@devhop/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { confirm } from "@/components/kit";
 import { router } from "./app/router";
 import "./index.css";
 import { registerSW } from "./shared/lib/register-sw";

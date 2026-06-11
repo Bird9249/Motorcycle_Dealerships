@@ -1,9 +1,9 @@
-import { Header } from "@/app/layout/Header";
-import { Main } from "@/app/layout/Main";
-import { uploadAvatarFile } from "@/shared/lib/upload-avatar";
-import { Button, toast } from "@devhop/ui";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeftIcon, HelpCircleIcon } from "lucide-react";
+import { Header } from "@/app/layout/Header";
+import { Main } from "@/app/layout/Main";
+import { Button, toast } from "@/components/kit";
+import { uploadAvatarFile } from "@/shared/lib/upload-avatar";
 import { useCreateUser } from "../api/queries";
 import { UserFormTour, useUserFormTour } from "../tour";
 import { UserForm } from "../ui/UserForm";

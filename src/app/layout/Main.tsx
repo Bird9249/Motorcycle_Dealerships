@@ -1,4 +1,4 @@
-import { cn } from "@devhop/ui";
+import { cn } from "@/components/kit";
 
 type MainProps = React.HTMLAttributes<HTMLElement> & {
   fixed?: boolean;

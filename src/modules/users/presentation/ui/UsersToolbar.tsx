@@ -1,5 +1,5 @@
-import { Button } from "@devhop/ui";
 import { HelpCircleIcon, PlusIcon } from "lucide-react";
+import { Button } from "@/components/kit";
 
 type UsersToolbarProps = {
   canManage: boolean;

@@ -1,7 +1,7 @@
-import { useAuthState } from "@/modules/auth/presentation/model/useAuthState";
-import { Loader } from "@devhop/ui";
 import { Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { Loader } from "@/components/kit";
+import { useAuthState } from "@/modules/auth/presentation/model/useAuthState";
 
 export function AuthLayout() {
   const { isLoading, isAuthenticated } = useAuthState();

@@ -1,8 +1,14 @@
+import { useState } from "react";
 import { Header } from "@/app/layout/Header";
 import { Main } from "@/app/layout/Main";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  toast,
+} from "@/components/kit";
 import { uploadAvatarFile } from "@/shared/lib/upload-avatar";
-import { Card, CardContent, CardHeader, CardTitle, toast } from "@devhop/ui";
-import { useState } from "react";
 import { profileApi } from "../api/client";
 import { useAuthState } from "../model/useAuthState";
 import { ProfileForm } from "../ui/ProfileForm";

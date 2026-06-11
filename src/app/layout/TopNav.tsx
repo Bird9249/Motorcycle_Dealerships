@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+import { Menu } from "lucide-react";
 import {
   Button,
   cn,
@@ -5,9 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@devhop/ui";
-import { Link } from "@tanstack/react-router";
-import { Menu } from "lucide-react";
+} from "@/components/kit";
 
 type TopNavProps = React.HTMLAttributes<HTMLElement> & {
   links: {

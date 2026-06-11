@@ -1,3 +1,5 @@
+import { useNavigate } from "@tanstack/react-router";
+import { ChevronsUpDown, LogOut, Settings, UserRound } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -13,9 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@devhop/ui";
-import { useNavigate } from "@tanstack/react-router";
-import { ChevronsUpDown, LogOut, UserRound } from "lucide-react";
+} from "@/components/kit";
 import { useAuthState } from "@/modules/auth/presentation/model/useAuthState";
 import { useDisclosure } from "@/shared/hooks/useDisclosure";
 import { getInitials } from "@/shared/lib/utils";
@@ -90,6 +90,13 @@ export function NavUser() {
                 <UserRound />
                 ໂປຣໄຟລ໌
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate({ to: "/app/settings" })}
+              >
+                <Settings />
+                ການຕັ້ງຄ່າ
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => open()}>
                 <LogOut />
                 ອອກຈາກລະບົບ

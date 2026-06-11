@@ -1,10 +1,10 @@
+import { Loader2, Upload } from "lucide-react";
+import { useCallback, useId, useState } from "react";
+import { Button } from "@/components/kit";
 import {
   DEFAULT_CHUNK_SIZE,
   uploadLargeFileInChunks,
 } from "@/shared/lib/chunk-upload-s3";
-import { Button } from "@devhop/ui";
-import { Loader2, Upload } from "lucide-react";
-import { useCallback, useId, useState } from "react";
 
 export type ChunkFileUploadProps = {
   /** Prefix ของ key ใน bucket เช่น "uploads/large" */

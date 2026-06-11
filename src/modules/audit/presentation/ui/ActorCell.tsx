@@ -1,5 +1,5 @@
-import { Button, useCopyToClipboard } from "@devhop/ui";
 import { Check, Copy } from "lucide-react";
+import { Button, useCopyToClipboard } from "@/components/kit";
 import type { AuditItem } from "../api/client";
 
 export const ActorCell = ({ item }: { item: AuditItem }) => {

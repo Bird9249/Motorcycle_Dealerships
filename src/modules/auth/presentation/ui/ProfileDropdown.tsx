@@ -1,6 +1,5 @@
-import { useDisclosure } from "@/shared/hooks/useDisclosure";
-import { getInitials } from "@/shared/lib/utils";
-import { resolveImageSrc } from "@/shared/ui/AppImage";
+import { useNavigate } from "@tanstack/react-router";
+import { LogOut, Settings, UserRound } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -13,9 +12,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@devhop/ui";
-import { useNavigate } from "@tanstack/react-router";
-import { LogOut, UserRound } from "lucide-react";
+} from "@/components/kit";
+import { useDisclosure } from "@/shared/hooks/useDisclosure";
+import { getInitials } from "@/shared/lib/utils";
+import { resolveImageSrc } from "@/shared/ui/AppImage";
 import { useAuthState } from "../model/useAuthState";
 
 export function ProfileDropdown() {
@@ -55,6 +55,11 @@ export function ProfileDropdown() {
             <UserRound />
             ໂປຣໄຟລ໌
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate({ to: "/app/settings" })}>
+            <Settings />
+            ການຕັ້ງຄ່າ
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => open()}>
             <LogOut />
             ອອກຈາກລະບົບ

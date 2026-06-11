@@ -1,10 +1,10 @@
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Header } from "@/app/layout/Header";
 import { Main } from "@/app/layout/Main";
+import { toast } from "@/components/kit";
 import { useActionPermission } from "@/modules/auth/presentation/model/useActionPermission";
 import { USER_ROLES } from "@/modules/roles/domain/contracts/user-roles";
 import type { OffsetPageQueryDTO } from "@/shared/contracts/base";
-import { toast } from "@devhop/ui";
-import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useDeleteUser, useUsersQuery } from "../api/queries";
 import { UsersTour, useUsersTour } from "../tour";
 import { UsersFilter } from "../ui/UsersFilter";
@@ -44,8 +44,8 @@ export function UsersPage() {
           <UsersTable
             data={list.data?.data ?? []}
             isLoading={list.isLoading}
-            offset={search.offset ?? 0}
-            limit={search.limit ?? 20}
+            offset={Number(search.offset ?? 0)}
+            limit={Number(search.limit ?? 20)}
             totalCount={list.data?.meta?.total ?? 0}
             onPaginationChange={(offset, limit) =>
               nav({ search: { ...search, offset, limit } })

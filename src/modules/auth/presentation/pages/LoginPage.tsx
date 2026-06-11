@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@devhop/ui";
+} from "@/components/kit";
 import SignInForm from "../ui/SignInForm";
 
 export function LoginPage() {

@@ -1,11 +1,11 @@
+import type { ComponentPropsWithoutRef } from "react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@devhop/ui";
-import type { ComponentPropsWithoutRef } from "react";
+} from "@/components/kit";
 
 export type SimpleSelectOption = {
   label: string;

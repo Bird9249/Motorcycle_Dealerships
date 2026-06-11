@@ -1,13 +1,13 @@
-import { formatDateTimeLocal } from "@/shared/lib/date-time";
-import { RowActions } from "@/shared/ui/RowActions";
+import { EyeIcon } from "lucide-react";
 import {
   Badge,
   createExpandableColumn,
   createSortableColumn,
   DataTable,
   type TanstackReactTable,
-} from "@devhop/ui";
-import { EyeIcon } from "lucide-react";
+} from "@/components/kit";
+import { formatDateTimeLocal } from "@/shared/lib/date-time";
+import { RowActions } from "@/shared/ui/RowActions";
 import type { AuditItem } from "../api/client";
 import { ActorCell } from "./ActorCell";
 

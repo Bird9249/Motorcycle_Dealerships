@@ -1,16 +1,16 @@
-import {
-  getPermissionLabel,
-  type PermissionId,
-} from "@/modules/roles/domain/contracts/permissions";
-import { RowActions } from "@/shared/ui/RowActions";
+import { EditIcon, TrashIcon } from "lucide-react";
 import {
   confirm,
   createExpandableColumn,
   createSortableColumn,
   DataTable,
   type TanstackReactTable,
-} from "@devhop/ui";
-import { EditIcon, TrashIcon } from "lucide-react";
+} from "@/components/kit";
+import {
+  getPermissionLabel,
+  type PermissionId,
+} from "@/modules/roles/domain/contracts/permissions";
+import { RowActions } from "@/shared/ui/RowActions";
 import type { RoleDTO } from "../api/client";
 
 type RolesTableProps = {

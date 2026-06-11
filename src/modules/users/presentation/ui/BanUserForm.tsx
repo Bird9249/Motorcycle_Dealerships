@@ -1,13 +1,14 @@
-import { toISOForAPI } from "@/shared/lib/date-time";
+import { z } from "zod";
 import {
   Button,
+  FormActions,
   FormDatePicker,
   FormRoot,
   FormTextarea,
   RHF,
   zodResolver,
-} from "@devhop/ui";
-import { z } from "zod";
+} from "@/components/kit";
+import { toISOForAPI } from "@/shared/lib/date-time";
 
 const BanFormSchema = z.object({
   reason: z.string().max(255).optional(),
@@ -37,24 +38,20 @@ export function BanUserForm({
           expires: toISOForAPI(vals.expires),
         })
       }
-      className="space-y-3"
+      className="gap-3"
     >
-      <FormTextarea
-        name="reason"
-        label="Reason"
-        placeholder="Optional reason"
-      />
+      <FormTextarea name="reason" label="ເຫດຜົນ" placeholder="ເຫດຜົນ (ທາງເລືອກ)" />
       <FormDatePicker
         name="expires"
-        label="Expires"
-        placeholder="Select date (optional)"
+        label="ວັນໝົດອາຍຸ"
+        placeholder="ເລືອກວັນທີ (ທາງເລືອກ)"
       />
 
-      <div className="flex justify-end gap-2 pt-2">
+      <FormActions>
         <Button type="submit" isLoading={submitting}>
-          Confirm ban
+          ຢືນຢັນການລະງັບ
         </Button>
-      </div>
+      </FormActions>
     </FormRoot>
   );
 }

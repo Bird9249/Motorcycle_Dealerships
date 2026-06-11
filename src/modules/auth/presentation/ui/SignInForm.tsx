@@ -1,3 +1,5 @@
+import { useNavigate } from "@tanstack/react-router";
+import z from "zod";
 import {
   Button,
   FormCheckbox,
@@ -8,9 +10,7 @@ import {
   RHF,
   toast,
   zodResolver,
-} from "@devhop/ui";
-import { useNavigate } from "@tanstack/react-router";
-import z from "zod";
+} from "@/components/kit";
 import { authClient } from "../api/client";
 import { useAuthState } from "../model/useAuthState";
 

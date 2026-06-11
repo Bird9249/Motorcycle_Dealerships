@@ -1,6 +1,6 @@
-import { Button } from "@devhop/ui";
 import { RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/kit";
 
 interface UpdateBannerProps {
   onVisibilityChange?: (visible: boolean) => void;

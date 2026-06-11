@@ -1,4 +1,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: index used for predictable skeleton keys */
+
+import type { QueryObserverResult } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 import {
   Button,
   Card,
@@ -7,9 +10,7 @@ import {
   CardTitle,
   cn,
   Skeleton,
-} from "@devhop/ui";
-import type { QueryObserverResult } from "@tanstack/react-query";
-import type { ReactNode } from "react";
+} from "@/components/kit";
 
 type QueryStateProps<TData = unknown, TError = Error> = {
   result?: Pick<

@@ -1,4 +1,4 @@
-import { Button, SimpleDropdown, useIsMobile } from "@devhop/ui";
+import { Button, SimpleDropdown, useIsMobile } from "@/components/kit";
 
 export type RowAction = {
   label: string;

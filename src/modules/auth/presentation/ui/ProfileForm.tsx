@@ -1,14 +1,14 @@
-import { resolveImageSrc } from "@/shared/ui/AppImage";
-import { AvatarDeferredUpload } from "@/shared/ui/AvatarDeferredUpload";
+import { z } from "zod";
 import {
   Button,
+  FormActions,
+  FormAvatarUpload,
   FormInput,
   FormPassword,
   FormRoot,
   RHF,
   zodResolver,
-} from "@devhop/ui";
-import { z } from "zod";
+} from "@/components/kit";
 
 const ProfileFormSchema = z
   .object({
@@ -74,32 +74,9 @@ export function ProfileForm({
           imageFile: vals.imageFile ?? undefined,
         })
       }
-      className="space-y-4"
     >
       <div data-tourid="form-avatar">
-        <RHF.Controller
-          name="image"
-          control={methods.control}
-          render={({ field: imageField }) => (
-            <RHF.Controller
-              name="imageFile"
-              control={methods.control}
-              render={({ field: fileField }) => (
-                <AvatarDeferredUpload
-                  value={
-                    imageField.value
-                      ? resolveImageSrc(imageField.value)
-                      : undefined
-                  }
-                  imageFile={fileField.value ?? undefined}
-                  onChange={imageField.onChange}
-                  onFileSelect={fileField.onChange}
-                  hint="ເລືອກຮູບ ຈະອັບໂຫຼດເມື່ອກົດບັນທຶກ"
-                />
-              )}
-            />
-          )}
-        />
+        <FormAvatarUpload hint="ເລືອກຮູບ ຈະອັບໂຫຼດເມື່ອກົດບັນທຶກ" />
       </div>
       <div data-tourid="form-name">
         <FormInput name="name" label="ຊື່" requiredMark placeholder="John Doe" />
@@ -119,11 +96,11 @@ export function ProfileForm({
         />
       </div>
 
-      <div className="flex justify-end gap-2" data-tourid="form-submit">
+      <FormActions data-tourid="form-submit">
         <Button type="submit" isLoading={submitting}>
           ບັນທຶກການປ່ຽນແປງ
         </Button>
-      </div>
+      </FormActions>
     </FormRoot>
   );
 }

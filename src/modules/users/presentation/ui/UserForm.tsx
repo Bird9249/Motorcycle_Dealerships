@@ -1,18 +1,18 @@
-import type { RoleDTO } from "@/modules/roles/presentation/api/client";
-import { config } from "@/shared/lib/config";
-import { fetchLookupForInfinite, hydrateLookupItem } from "@/shared/lib/utils";
-import { resolveImageSrc } from "@/shared/ui/AppImage";
-import { AvatarDeferredUpload } from "@/shared/ui/AvatarDeferredUpload";
-import { FormInfiniteCombobox } from "@/shared/ui/FormInfiniteCombobox";
+import { z } from "zod";
 import {
   Button,
+  FormActions,
+  FormAvatarUpload,
+  FormInfiniteCombobox,
   FormInput,
   FormPassword,
   FormRoot,
   RHF,
   zodResolver,
-} from "@devhop/ui";
-import { z } from "zod";
+} from "@/components/kit";
+import type { RoleDTO } from "@/modules/roles/presentation/api/client";
+import { config } from "@/shared/lib/config";
+import { fetchLookupForInfinite, hydrateLookupItem } from "@/shared/lib/utils";
 
 const UserFormSchema = z.object({
   email: z.string().email({ message: "ກະລຸນາໃສ່ອີເມວໃຫ້ຖືກຕ້ອງ" }),
@@ -73,32 +73,9 @@ export function UserForm({
           imageFile: vals.imageFile ?? undefined,
         })
       }
-      className="space-y-4"
     >
       <div data-tourid="form-avatar">
-        <RHF.Controller
-          name="image"
-          control={methods.control}
-          render={({ field: imageField }) => (
-            <RHF.Controller
-              name="imageFile"
-              control={methods.control}
-              render={({ field: fileField }) => (
-                <AvatarDeferredUpload
-                  value={
-                    imageField.value
-                      ? resolveImageSrc(imageField.value)
-                      : undefined
-                  }
-                  imageFile={fileField.value ?? undefined}
-                  onChange={imageField.onChange}
-                  onFileSelect={fileField.onChange}
-                  hint="ເລືອກຮູບ ຈະອັບໂຫຼດເມື່ອກົດບັນທຶກ"
-                />
-              )}
-            />
-          )}
-        />
+        <FormAvatarUpload hint="ເລືອກຮູບ ຈະອັບໂຫຼດເມື່ອກົດບັນທຶກ" />
       </div>
       <div data-tourid="form-email">
         <FormInput
@@ -138,11 +115,11 @@ export function UserForm({
         />
       </div>
 
-      <div className="flex justify-end gap-2" data-tourid="form-submit">
+      <FormActions data-tourid="form-submit">
         <Button type="submit" isLoading={submitting}>
           ບັນທຶກ
         </Button>
-      </div>
+      </FormActions>
     </FormRoot>
   );
 }

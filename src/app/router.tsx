@@ -1,11 +1,11 @@
-import { RequirePermissions } from "@/modules/auth/presentation/ui/RequirePermissions";
-import { LazyPage } from "@/shared/ui/LazyPage";
 import {
   createRootRoute,
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
 import { lazy } from "react";
+import { RequirePermissions } from "@/modules/auth/presentation/ui/RequirePermissions";
+import { LazyPage } from "@/shared/ui/LazyPage";
 
 const RootLayout = lazy(() =>
   import("./layout/RootLayout").then((module) => ({
@@ -46,9 +46,11 @@ const RolesPage = lazy(() =>
   })),
 );
 const RoleCreatePage = lazy(() =>
-  import("@/modules/roles/presentation/pages/RoleCreatePage").then((module) => ({
-    default: module.RoleCreatePage,
-  })),
+  import("@/modules/roles/presentation/pages/RoleCreatePage").then(
+    (module) => ({
+      default: module.RoleCreatePage,
+    }),
+  ),
 );
 const RoleEditPage = lazy(() =>
   import("@/modules/roles/presentation/pages/RoleEditPage").then((module) => ({
@@ -73,9 +75,11 @@ const UsersPage = lazy(() =>
   })),
 );
 const UserCreatePage = lazy(() =>
-  import("@/modules/users/presentation/pages/UserCreatePage").then((module) => ({
-    default: module.UserCreatePage,
-  })),
+  import("@/modules/users/presentation/pages/UserCreatePage").then(
+    (module) => ({
+      default: module.UserCreatePage,
+    }),
+  ),
 );
 const UserEditPage = lazy(() =>
   import("@/modules/users/presentation/pages/UserEditPage").then((module) => ({
@@ -86,6 +90,13 @@ const ProfilePage = lazy(() =>
   import("@/modules/auth/presentation/pages/ProfilePage").then((module) => ({
     default: module.ProfilePage,
   })),
+);
+const SettingsPage = lazy(() =>
+  import("@/modules/settings/presentation/pages/SettingsPage").then(
+    (module) => ({
+      default: module.SettingsPage,
+    }),
+  ),
 );
 const Forbidden = lazy(() =>
   import("./error/Forbidden").then((module) => ({
@@ -232,6 +243,16 @@ const profileRoute = createRoute({
   ),
 });
 
+const settingsRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/settings",
+  component: () => (
+    <LazyPage>
+      <SettingsPage />
+    </LazyPage>
+  ),
+});
+
 const forbiddenRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/errors/forbidden",
@@ -255,6 +276,7 @@ export const routeTree = rootRoute.addChildren([
     auditRoute,
     auditDetailRoute,
     profileRoute,
+    settingsRoute,
   ]),
   forbiddenRoute,
 ]);

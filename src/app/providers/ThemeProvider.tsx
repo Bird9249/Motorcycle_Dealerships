@@ -1,1 +1,1 @@
-export { ThemeProvider } from "@devhop/ui";
+export { ThemeProvider } from "@/components/kit";

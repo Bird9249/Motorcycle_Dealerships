@@ -1,7 +1,7 @@
-import { Button } from "@devhop/ui";
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { Button } from "@/components/kit";
 
 export function ErrorBoundary({ error }: { error: unknown }) {
   const router = useRouter();

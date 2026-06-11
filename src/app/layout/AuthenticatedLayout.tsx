@@ -1,3 +1,5 @@
+import { Outlet, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import {
   cn,
   Loader,
@@ -7,9 +9,7 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarRail,
-} from "@devhop/ui";
-import { Outlet, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+} from "@/components/kit";
 import { useAuthState } from "@/modules/auth/presentation/model/useAuthState";
 import { getCookie } from "@/shared/lib/cookies";
 import { SkipToMain } from "@/shared/ui/SkipToMain";

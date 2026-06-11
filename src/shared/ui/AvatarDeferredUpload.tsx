@@ -1,6 +1,6 @@
-import { Button } from "@devhop/ui";
 import { Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useId, useMemo } from "react";
+import { Button } from "@/components/kit";
 import { AppImage } from "./AppImage";
 
 export type AvatarDeferredUploadProps = {

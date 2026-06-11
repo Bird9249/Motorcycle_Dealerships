@@ -1,10 +1,10 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/components/kit";
 import type {
   RoleCreateInput,
   RoleUpdateInput,
 } from "@/modules/roles/domain/contracts";
 import type { OffsetPageQueryDTO } from "@/shared/contracts/base";
-import { toast } from "@devhop/ui";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { rolesApi } from "./client";
 
 export const rolesKeys = {

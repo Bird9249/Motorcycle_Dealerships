@@ -1,9 +1,9 @@
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Header } from "@/app/layout/Header";
 import { Main } from "@/app/layout/Main";
+import { toast } from "@/components/kit";
 import { useActionPermission } from "@/modules/auth/presentation/model/useActionPermission";
 import type { OffsetPageQueryDTO } from "@/shared/contracts/base";
-import { toast } from "@devhop/ui";
-import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useDeleteRole, useRolesQuery } from "../api/queries";
 import { RolesTour, useRolesTour } from "../tour";
 import { RolesFilter } from "../ui/RolesFilter";
