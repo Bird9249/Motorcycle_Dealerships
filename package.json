@@ -76,6 +76,11 @@
     "format": "biome format .",
     "lint": "biome check .",
     "rbac:sync": "bun run src/modules/roles/domain/scripts/sync.ts",
+    "seed:inventory": "bun run src/server/scripts/seed-inventory-master-data.ts",
+    "seed:finance": "bun run src/server/scripts/seed-finance-companies.ts",
+    "seed:exchange-rates": "bun run src/server/scripts/seed-exchange-rates.ts",
+    "sales:mark-overdue": "bun run src/server/scripts/mark-overdue-schedules.ts",
+    "test:sales": "bun run src/server/scripts/test-sales-core-acceptance.ts && bun run src/server/scripts/test-sales-financing-acceptance.ts && bun run src/server/scripts/test-sales-multi-currency-acceptance.ts",
     "start": "NODE_ENV=production bun index.ts",
     "worker": "WORKER_PORT=3001 bun run src/server/worker.ts"
   },

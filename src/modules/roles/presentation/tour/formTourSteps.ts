@@ -5,7 +5,7 @@ export const roleFormTourSteps: Step[] = [
     target: "body",
     content: "ຍິນດີຕ້ອນຮັບສູ່ຟອມສ້າງ/ແກ້ໄຂບົດບາດ! ທ່ານຈະໄດ້ຮຽນຮູ້ວິທີໃຊ້ງານຟອມນີ້ໃນບົດສອນສັ້ນໆນີ້.",
     placement: "center",
-    disableBeacon: true,
+    skipBeacon: true,
   },
   {
     target: '[data-tourid="form-name"]',

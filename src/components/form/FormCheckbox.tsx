@@ -16,6 +16,7 @@ type Props = {
   hint?: React.ReactNode;
   requiredMark?: boolean;
   className?: string;
+  disabled?: boolean;
 };
 
 export function FormCheckbox({
@@ -24,6 +25,7 @@ export function FormCheckbox({
   hint,
   requiredMark,
   className,
+  disabled,
 }: Props) {
   const { control } = useFormContext();
   const error = useFieldError(name);
@@ -42,6 +44,7 @@ export function FormCheckbox({
               onBlur={field.onBlur}
               ref={field.ref}
               aria-invalid={!!error}
+              disabled={disabled}
             />
           )}
         />

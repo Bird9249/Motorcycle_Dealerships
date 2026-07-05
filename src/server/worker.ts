@@ -1,7 +1,9 @@
 import { auditOutboxService } from "@/modules/audit/domain/workers/audit.worker";
+import { startOverdueSchedulesWorker } from "@/modules/sales/domain/workers/overdue-schedules.worker";
 import { closePgPool } from "@/server/shared/outbox/pg-client";
 
 const { shutdown } = auditOutboxService;
+const stopOverdueSchedulesWorker = startOverdueSchedulesWorker();
 
 // HTTP server for health check
 const workerPort = process.env.WORKER_PORT
@@ -22,6 +24,7 @@ Bun.serve({
 console.info(`Worker running on port ${workerPort}`);
 
 const onExit = async () => {
+  stopOverdueSchedulesWorker();
   try {
     await shutdown();
   } catch {

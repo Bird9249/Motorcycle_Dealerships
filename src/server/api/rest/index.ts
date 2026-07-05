@@ -1,6 +1,9 @@
 import { Elysia } from "elysia";
 import { auditRoutes } from "@/modules/audit/api";
 import { authRoutes } from "@/modules/auth/api";
+import { inventoryRoutes } from "@/modules/inventory/api";
+import { masterDataRoutes } from "@/modules/master-data/api";
+import { salesModuleRoutes } from "@/modules/sales/api";
 import { rolesRoutes } from "@/modules/roles/api";
 import { uploadRoutes } from "@/modules/upload/api";
 import { usersRoutes } from "@/modules/users/api";
@@ -11,5 +14,8 @@ export function createRestRoutes() {
     .use(usersRoutes)
     .use(rolesRoutes)
     .use(auditRoutes)
-    .use(uploadRoutes);
+    .use(uploadRoutes)
+    .use(inventoryRoutes)
+    .use(masterDataRoutes)
+    .use(salesModuleRoutes);
 }

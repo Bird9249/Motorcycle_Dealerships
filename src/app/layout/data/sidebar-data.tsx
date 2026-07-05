@@ -1,8 +1,11 @@
 import {
   AudioWaveform,
+  Bike,
   Command,
+  Database,
   GalleryVerticalEnd,
   LayoutDashboard,
+  ReceiptIcon,
   ShieldCheck,
   UserCog,
   Users,
@@ -35,6 +38,35 @@ export const sidebarData: SidebarData = {
           title: "ແຜງຄວບຄຸມ",
           url: "/app/dashboard",
           icon: LayoutDashboard,
+        },
+      ],
+    },
+    {
+      title: "ທຸລະກິດ",
+      items: [
+        {
+          title: "ລາຍການລົດ",
+          url: "/app/inventory/vehicles",
+          icon: Bike,
+          requiredPermissions: ["inventory:read"],
+        },
+        {
+          title: "ຂໍ້ມູນຫຼັກ",
+          url: "/app/master-data",
+          icon: Database,
+          requiredPermissions: ["master-data:read"],
+        },
+        {
+          title: "ການຂາຍ",
+          url: "/app/sales",
+          icon: ReceiptIcon,
+          requiredPermissions: ["sales:read"],
+        },
+        {
+          title: "ລູກຄ້າ",
+          url: "/app/sales/customers",
+          icon: Users,
+          requiredPermissions: ["sales:read"],
         },
       ],
     },

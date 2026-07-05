@@ -1,5 +1,3 @@
-import { RequirePermissions } from "@/modules/auth/presentation/ui/RequirePermissions";
-import { LazyPage } from "@/shared/ui/LazyPage";
 import {
   createRootRoute,
   createRoute,
@@ -7,6 +5,9 @@ import {
   redirect,
 } from "@tanstack/react-router";
 import { lazy } from "react";
+import { z } from "zod";
+import { RequirePermissions } from "@/modules/auth/presentation/ui/RequirePermissions";
+import { LazyPage } from "@/shared/ui/LazyPage";
 
 const RootLayout = lazy(() =>
   import("./layout/RootLayout").then((module) => ({
@@ -96,6 +97,81 @@ const SettingsPage = lazy(() =>
   import("@/modules/settings/presentation/pages/SettingsPage").then(
     (module) => ({
       default: module.SettingsPage,
+    }),
+  ),
+);
+const VehiclesPage = lazy(() =>
+  import("@/modules/inventory/presentation/pages/VehiclesPage").then(
+    (module) => ({
+      default: module.VehiclesPage,
+    }),
+  ),
+);
+const VehicleCreatePage = lazy(() =>
+  import("@/modules/inventory/presentation/pages/VehicleCreatePage").then(
+    (module) => ({
+      default: module.VehicleCreatePage,
+    }),
+  ),
+);
+const VehicleDetailPage = lazy(() =>
+  import("@/modules/inventory/presentation/pages/VehicleDetailPage").then(
+    (module) => ({
+      default: module.VehicleDetailPage,
+    }),
+  ),
+);
+const VehicleEditPage = lazy(() =>
+  import("@/modules/inventory/presentation/pages/VehicleEditPage").then(
+    (module) => ({
+      default: module.VehicleEditPage,
+    }),
+  ),
+);
+const MasterDataPage = lazy(() =>
+  import("@/modules/master-data/presentation/pages/MasterDataPage").then(
+    (module) => ({
+      default: module.MasterDataPage,
+    }),
+  ),
+);
+const SalesPage = lazy(() =>
+  import("@/modules/sales/presentation/pages/SalesPage").then((module) => ({
+    default: module.SalesPage,
+  })),
+);
+const SaleCreatePage = lazy(() =>
+  import("@/modules/sales/presentation/pages/SaleCreatePage").then(
+    (module) => ({
+      default: module.SaleCreatePage,
+    }),
+  ),
+);
+const SaleDetailPage = lazy(() =>
+  import("@/modules/sales/presentation/pages/SaleDetailPage").then(
+    (module) => ({
+      default: module.SaleDetailPage,
+    }),
+  ),
+);
+const SaleEditPage = lazy(() =>
+  import("@/modules/sales/presentation/pages/SaleEditPage").then(
+    (module) => ({
+      default: module.SaleEditPage,
+    }),
+  ),
+);
+const PaymentSchedulePage = lazy(() =>
+  import("@/modules/sales/presentation/pages/PaymentSchedulePage").then(
+    (module) => ({
+      default: module.PaymentSchedulePage,
+    }),
+  ),
+);
+const CustomersPage = lazy(() =>
+  import("@/modules/sales/presentation/pages/CustomersPage").then(
+    (module) => ({
+      default: module.CustomersPage,
     }),
   ),
 );
@@ -263,6 +339,153 @@ const settingsRoute = createRoute({
   ),
 });
 
+const vehiclesInventoryRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/inventory/vehicles",
+  component: () => (
+    <RequirePermissions all={["inventory:read"]}>
+      <LazyPage>
+        <VehiclesPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const vehicleCreateRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/inventory/vehicles/new",
+  component: () => (
+    <RequirePermissions all={["inventory:read"]} any={["inventory:create"]}>
+      <LazyPage>
+        <VehicleCreatePage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const vehicleDetailRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/inventory/vehicles/$id",
+  component: () => (
+    <RequirePermissions all={["inventory:read"]}>
+      <LazyPage>
+        <VehicleDetailPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const vehicleEditRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/inventory/vehicles/$id/edit",
+  component: () => (
+    <RequirePermissions all={["inventory:read"]} any={["inventory:update"]}>
+      <LazyPage>
+        <VehicleEditPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const masterDataSearchSchema = z.object({
+  tab: z
+    .enum(["brands", "models", "colors", "finance-companies"])
+    .optional()
+    .catch("brands"),
+});
+
+const masterDataRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/master-data",
+  validateSearch: (search) => masterDataSearchSchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["master-data:read"]}>
+      <LazyPage>
+        <MasterDataPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const salesRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/sales",
+  component: () => (
+    <RequirePermissions all={["sales:read"]}>
+      <LazyPage>
+        <SalesPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const saleCreateRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/sales/new",
+  component: () => (
+    <RequirePermissions all={["sales:read"]} any={["sales:create"]}>
+      <LazyPage>
+        <SaleCreatePage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const saleDetailRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/sales/$id",
+  component: () => (
+    <RequirePermissions all={["sales:read"]}>
+      <LazyPage>
+        <SaleDetailPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const saleEditRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/sales/$id/edit",
+  component: () => (
+    <RequirePermissions all={["sales:read"]} any={["sales:update"]}>
+      <LazyPage>
+        <SaleEditPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const paymentScheduleRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/sales/$id/schedule",
+  component: () => (
+    <RequirePermissions all={["sales:read"]}>
+      <LazyPage>
+        <PaymentSchedulePage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const customersSearchSchema = z.object({
+  offset: z.coerce.number().optional().catch(0),
+  limit: z.coerce.number().optional().catch(20),
+  q: z.string().optional(),
+});
+
+const customersRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/sales/customers",
+  validateSearch: (search) => customersSearchSchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["sales:read"]}>
+      <LazyPage>
+        <CustomersPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
 const forbiddenRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/errors/forbidden",
@@ -287,6 +510,17 @@ export const routeTree = rootRoute.addChildren([
     auditDetailRoute,
     profileRoute,
     settingsRoute,
+    vehiclesInventoryRoute,
+    vehicleCreateRoute,
+    vehicleDetailRoute,
+    vehicleEditRoute,
+    masterDataRoute,
+    salesRoute,
+    saleCreateRoute,
+    saleDetailRoute,
+    saleEditRoute,
+    paymentScheduleRoute,
+    customersRoute,
   ]),
   forbiddenRoute,
 ]);

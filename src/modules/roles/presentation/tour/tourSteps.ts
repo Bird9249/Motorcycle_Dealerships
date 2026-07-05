@@ -6,7 +6,7 @@ export const rolesTourSteps: Step[] = [
     content:
       "ຍິນດີຕ້ອນຮັບສູ່ຫນ້າຈັດການບົດບາດ! ຫນ້ານີ້ຊ່ວຍທ່ານຈັດການບົດບາດແລະສິດທິຂອງຜູ້ໃຊ້ໃນລະບົບ ທ່ານສາມາດສ້າງ, ແກ້ໄຂ, ຫຼືລຶບບົດບາດໄດ້. ທ່ານຈະໄດ້ຮຽນຮູ້ວິທີໃຊ້ງານຫນ້ານີ້ໃນບົດສອນສັ້ນໆນີ້.",
     placement: "center",
-    disableBeacon: true,
+    skipBeacon: true,
   },
   {
     target: '[data-tourid="roles-toolbar"]',

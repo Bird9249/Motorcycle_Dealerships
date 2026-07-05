@@ -17,7 +17,7 @@ const baseURL =
   "http://localhost:3000";
 
 export const auth = betterAuth({
-  basePath: "/auth",
+  basePath: "/api/auth",
   baseURL,
   database: drizzleAdapter(db, { provider: "pg", schema }),
   trustedOrigins: [process.env.CORS_ORIGIN || ""],

@@ -17,6 +17,38 @@ export const routeMeta: Record<string, RouteMeta> = {
   "/app/roles": { label: "ບົດບາດ" },
   "/app/roles/create": { label: "ສ້າງບົດບາດ", parent: "/app/roles" },
   "/app/roles/$id/edit": { label: "ແກ້ໄຂບົດບາດ", parent: "/app/roles" },
+  "/app/inventory/vehicles": { label: "ລາຍການລົດ" },
+  "/app/inventory/vehicles/new": {
+    label: "ເພີ່ມລົດ",
+    parent: "/app/inventory/vehicles",
+  },
+  "/app/inventory/vehicles/$id": {
+    label: "ລາຍລະອຽດລົດ",
+    parent: "/app/inventory/vehicles",
+  },
+  "/app/inventory/vehicles/$id/edit": {
+    label: "ແກ້ໄຂລົດ",
+    parent: "/app/inventory/vehicles",
+  },
+  "/app/master-data": { label: "ຂໍ້ມູນຫຼັກ" },
+  "/app/sales": { label: "ການຂາຍ" },
+  "/app/sales/new": { label: "ສ້າງການຂາຍ", parent: "/app/sales" },
+  "/app/sales/$id": {
+    label: "ລາຍລະອຽດການຂາຍ",
+    parent: "/app/sales",
+  },
+  "/app/sales/$id/schedule": {
+    label: "ຕາຕະລາງຜ່ອນ",
+    parent: "/app/sales/$id",
+  },
+  "/app/sales/$id/edit": {
+    label: "ແກ້ໄຂຄຳສັ່ງຂາຍ",
+    parent: "/app/sales/$id",
+  },
+  "/app/sales/customers": {
+    label: "ລູກຄ້າ",
+    parent: "/app/sales",
+  },
   "/app/users": { label: "ຜູ້ໃຊ້" },
   "/app/users/create": { label: "ສ້າງຜູ້ໃຊ້", parent: "/app/users" },
   "/app/users/$id/edit": { label: "ແກ້ໄຂຜູ້ໃຊ້", parent: "/app/users" },

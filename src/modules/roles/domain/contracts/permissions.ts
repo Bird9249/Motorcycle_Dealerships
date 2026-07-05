@@ -9,6 +9,26 @@ export const Permissions = {
   audit: {
     read: "audit:read",
   },
+  inventory: {
+    create: "inventory:create",
+    read: "inventory:read",
+    update: "inventory:update",
+    delete: "inventory:delete",
+    updateStatus: "inventory:update-status",
+  },
+  masterData: {
+    create: "master-data:create",
+    read: "master-data:read",
+    update: "master-data:update",
+    delete: "master-data:delete",
+  },
+  sales: {
+    create: "sales:create",
+    read: "sales:read",
+    update: "sales:update",
+    cancel: "sales:cancel",
+    confirm: "sales:confirm",
+  },
 } as const;
 
 export const ALL_PERMISSIONS = Object.entries(Permissions).flatMap(
@@ -22,6 +42,9 @@ export type PermissionId = (typeof ALL_PERMISSIONS)[number]["id"];
 export const RESOURCE_LABELS: Record<string, string> = {
   users: "ຜູ້ໃຊ້",
   audit: "ບັນທຶກການກວດກາ",
+  inventory: "ສິນຄ້າຄົງຄັງ",
+  masterData: "ຂໍ້ມູນຫຼັກ",
+  sales: "ການຂາຍ",
 };
 
 export const ACTION_LABELS: Record<string, string> = {
@@ -30,6 +53,9 @@ export const ACTION_LABELS: Record<string, string> = {
   update: "ແກ້ໄຂ",
   delete: "ລຶບ",
   ban: "ລະງັບ",
+  "update-status": "ປ່ຽນສະຖານະ",
+  cancel: "ຍົກເລີກ",
+  confirm: "ຢືນຢັນ",
   all: "ທັງໝົດ",
 };
 

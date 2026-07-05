@@ -24,6 +24,8 @@ export {
   FormDatePicker,
   FormInfiniteCombobox,
   FormInput,
+  FormNativeSelect,
+  type FormNativeSelectOption,
   FormPassword,
   type FormPasswordProps,
   FormRoot,
