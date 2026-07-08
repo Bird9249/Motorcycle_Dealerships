@@ -79,6 +79,38 @@ const ALLOWLIST_BY_ENTITY: Record<string, readonly string[]> = {
     "saleCurrency",
     "soldAt",
   ],
+  payment_account: [
+    "id",
+    "name",
+    "type",
+    "bankName",
+    "accountNumber",
+    "currency",
+    "isActive",
+    "displayOrder",
+  ],
+  payment: [
+    "id",
+    "paymentNumber",
+    "salesOrderId",
+    "paymentScheduleId",
+    "paymentAccountId",
+    "amount",
+    "currency",
+    "paymentMethod",
+    "status",
+    "paidAt",
+    "slipVerified",
+  ],
+  daily_reconciliation: [
+    "id",
+    "reconciliationDate",
+    "paymentAccountId",
+    "expectedAmount",
+    "actualAmount",
+    "difference",
+    "status",
+  ],
 };
 
 const REDACTED = "[REDACTED]" as const;

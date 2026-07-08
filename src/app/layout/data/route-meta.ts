@@ -49,6 +49,19 @@ export const routeMeta: Record<string, RouteMeta> = {
     label: "ລູກຄ້າ",
     parent: "/app/sales",
   },
+  "/app/payments": { label: "ການຊຳລະເງິນ" },
+  "/app/payments/new": {
+    label: "ຮັບຊຳລະ",
+    parent: "/app/payments",
+  },
+  "/app/payments/reconciliation": {
+    label: "ກວດສອບຍອດ",
+    parent: "/app/payments",
+  },
+  "/app/payments/$id": {
+    label: "ລາຍລະອຽດການຊຳລະ",
+    parent: "/app/payments",
+  },
   "/app/users": { label: "ຜູ້ໃຊ້" },
   "/app/users/create": { label: "ສ້າງຜູ້ໃຊ້", parent: "/app/users" },
   "/app/users/$id/edit": { label: "ແກ້ໄຂຜູ້ໃຊ້", parent: "/app/users" },

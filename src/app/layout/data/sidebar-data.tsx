@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   UserCog,
   Users,
+  Wallet,
 } from "lucide-react";
 import type { SidebarData } from "../types";
 
@@ -61,6 +62,12 @@ export const sidebarData: SidebarData = {
           url: "/app/sales",
           icon: ReceiptIcon,
           requiredPermissions: ["sales:read"],
+        },
+        {
+          title: "ການຊຳລະເງິນ",
+          url: "/app/payments",
+          icon: Wallet,
+          requiredPermissions: ["payments:read"],
         },
         {
           title: "ລູກຄ້າ",

@@ -8,4 +8,5 @@ export { FormInput } from "./FormInput";
 export { FormNativeSelect, type FormNativeSelectOption } from "./FormNativeSelect";
 export { FormPassword, type FormPasswordProps } from "./FormPassword";
 export { FormRoot } from "./FormRoot";
+export { FormSelect, type FormSelectOption } from "./FormSelect";
 export { FormTextarea } from "./FormTextarea";

@@ -29,6 +29,14 @@ export const Permissions = {
     cancel: "sales:cancel",
     confirm: "sales:confirm",
   },
+  payments: {
+    create: "payments:create",
+    read: "payments:read",
+    update: "payments:update",
+    verify: "payments:verify",
+    reject: "payments:reject",
+    reconcile: "payments:reconcile",
+  },
 } as const;
 
 export const ALL_PERMISSIONS = Object.entries(Permissions).flatMap(
@@ -45,6 +53,7 @@ export const RESOURCE_LABELS: Record<string, string> = {
   inventory: "ສິນຄ້າຄົງຄັງ",
   masterData: "ຂໍ້ມູນຫຼັກ",
   sales: "ການຂາຍ",
+  payments: "ການຊຳລະເງິນ",
 };
 
 export const ACTION_LABELS: Record<string, string> = {
@@ -56,6 +65,9 @@ export const ACTION_LABELS: Record<string, string> = {
   "update-status": "ປ່ຽນສະຖານະ",
   cancel: "ຍົກເລີກ",
   confirm: "ຢືນຢັນ",
+  verify: "ຢືນຢັນສລິບ",
+  reject: "ປະຕິເສດ",
+  reconcile: "ກວດສອບຍອດ",
   all: "ທັງໝົດ",
 };
 

@@ -175,6 +175,34 @@ const CustomersPage = lazy(() =>
     }),
   ),
 );
+const PaymentsPage = lazy(() =>
+  import("@/modules/payments/presentation/pages/PaymentsPage").then(
+    (module) => ({
+      default: module.PaymentsPage,
+    }),
+  ),
+);
+const PaymentDetailPage = lazy(() =>
+  import("@/modules/payments/presentation/pages/PaymentDetailPage").then(
+    (module) => ({
+      default: module.PaymentDetailPage,
+    }),
+  ),
+);
+const PaymentCreatePage = lazy(() =>
+  import("@/modules/payments/presentation/pages/PaymentCreatePage").then(
+    (module) => ({
+      default: module.PaymentCreatePage,
+    }),
+  ),
+);
+const ReconciliationPage = lazy(() =>
+  import("@/modules/payments/presentation/pages/ReconciliationPage").then(
+    (module) => ({
+      default: module.ReconciliationPage,
+    }),
+  ),
+);
 const Forbidden = lazy(() =>
   import("./error/Forbidden").then((module) => ({
     default: module.Forbidden,
@@ -486,6 +514,92 @@ const customersRoute = createRoute({
   ),
 });
 
+const paymentsSearchSchema = z.object({
+  offset: z.coerce.number().optional().catch(0),
+  limit: z.coerce.number().optional().catch(20),
+  status: z.enum(["pending", "verified", "rejected"]).optional(),
+  paymentAccountId: z.string().optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
+  sort: z
+    .array(
+      z.object({
+        field: z.string(),
+        dir: z.enum(["asc", "desc"]),
+      }),
+    )
+    .optional(),
+  filters: z
+    .array(
+      z.object({
+        field: z.string(),
+        op: z.string(),
+        value: z.unknown(),
+      }),
+    )
+    .optional(),
+});
+
+const paymentsRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/payments",
+  validateSearch: (search) => paymentsSearchSchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["payments:read"]}>
+      <LazyPage>
+        <PaymentsPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const paymentCreateSearchSchema = z.object({
+  salesOrderId: z.string().optional(),
+  paymentScheduleId: z.string().optional(),
+});
+
+const paymentCreateRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/payments/new",
+  validateSearch: (search) => paymentCreateSearchSchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["payments:read"]} any={["payments:create"]}>
+      <LazyPage>
+        <PaymentCreatePage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const paymentDetailRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/payments/$id",
+  component: () => (
+    <RequirePermissions all={["payments:read"]}>
+      <LazyPage>
+        <PaymentDetailPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const reconciliationSearchSchema = z.object({
+  date: z.string().optional(),
+});
+
+const reconciliationRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/payments/reconciliation",
+  validateSearch: (search) => reconciliationSearchSchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["payments:reconcile"]}>
+      <LazyPage>
+        <ReconciliationPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
 const forbiddenRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/errors/forbidden",
@@ -521,6 +635,10 @@ export const routeTree = rootRoute.addChildren([
     saleEditRoute,
     paymentScheduleRoute,
     customersRoute,
+    paymentsRoute,
+    paymentCreateRoute,
+    reconciliationRoute,
+    paymentDetailRoute,
   ]),
   forbiddenRoute,
 ]);

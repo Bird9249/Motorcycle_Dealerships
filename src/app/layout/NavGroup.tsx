@@ -29,6 +29,7 @@ import type {
   NavItem,
   NavLink,
 } from "./types";
+import { useNavItemBadge } from "./useNavItemBadge";
 
 export function NavGroup({ title, items }: NavGroupProps) {
   const { state, isMobile } = useSidebar();
@@ -66,6 +67,8 @@ function NavBadge({ children }: { children: ReactNode }) {
 
 function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
   const { setOpenMobile } = useSidebar();
+  const dynamicBadge = useNavItemBadge(item.url);
+  const badge = item.badge ?? dynamicBadge;
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
@@ -76,7 +79,7 @@ function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
         <Link to={item.url} onClick={() => setOpenMobile(false)}>
           {item.icon && <item.icon />}
           <span>{item.title}</span>
-          {item.badge && <NavBadge>{item.badge}</NavBadge>}
+          {badge ? <NavBadge>{badge}</NavBadge> : null}
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
@@ -176,10 +179,13 @@ function SidebarMenuCollapsedDropdown({
 }
 
 function checkIsActive(href: string, item: NavItem, mainNav = false) {
+  const path = href.split("?")[0];
+  const itemPath = "url" in item && item.url ? item.url.split("?")[0] : undefined;
   return (
-    href === item.url || // /endpint?search=param
-    href.split("?")[0] === item.url || // endpoint
-    !!item?.items?.filter((i) => i.url === href).length || // if child nav is active
+    href === item.url ||
+    path === itemPath ||
+    (!!itemPath && path.startsWith(`${itemPath}/`)) ||
+    !!item?.items?.filter((i) => i.url === href).length ||
     (mainNav &&
       href.split("/")[1] !== "" &&
       href.split("/")[1] === item?.url?.split("/")[1])

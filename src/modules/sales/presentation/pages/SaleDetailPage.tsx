@@ -17,6 +17,7 @@ import {
   CalendarIcon,
   CheckIcon,
   PencilIcon,
+  WalletIcon,
   XIcon,
 } from "lucide-react";
 import type { ReactNode } from "react";
@@ -48,6 +49,7 @@ export function SaleDetailPage() {
   const canConfirm = useActionPermission(["sales:confirm"]);
   const canCancel = useActionPermission(["sales:cancel"]);
   const canUpdate = useActionPermission(["sales:update"]);
+  const canRecordPayment = useActionPermission(["payments:create"]);
 
   const confirmOrder = useConfirmSalesOrder();
   const completeOrder = useCompleteSalesOrder();
@@ -58,6 +60,10 @@ export function SaleDetailPage() {
   const isConfirmed = order?.status === "confirmed";
   const isInHouse = order?.paymentType === "in_house_leasing";
   const isBankFinance = order?.paymentType === "bank_finance";
+  const canPayFromOrder =
+    !!canRecordPayment &&
+    !isDraft &&
+    order?.status !== "cancelled";
 
   return (
     <>
@@ -97,6 +103,20 @@ export function SaleDetailPage() {
               >
                 <CalendarIcon className="size-4" />
                 ຕາຕະລາງຜ່ອນ
+              </Button>
+            ) : null}
+            {canPayFromOrder ? (
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  nav({
+                    to: "/app/payments/new",
+                    search: { salesOrderId: id },
+                  })
+                }
+              >
+                <WalletIcon className="size-4" />
+                ຮັບຊຳລະ
               </Button>
             ) : null}
             {isDraft && canConfirm ? (

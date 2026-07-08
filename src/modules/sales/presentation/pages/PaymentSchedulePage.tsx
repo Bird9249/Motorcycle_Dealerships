@@ -56,6 +56,15 @@ export function PaymentSchedulePage() {
               <PaymentScheduleTable
                 data={scheduleQuery.data?.schedules ?? []}
                 isLoading={scheduleQuery.isLoading}
+                onPay={(schedule) =>
+                  nav({
+                    to: "/app/payments/new",
+                    search: {
+                      salesOrderId: id,
+                      paymentScheduleId: schedule.id,
+                    },
+                  })
+                }
               />
             </CardContent>
           </Card>

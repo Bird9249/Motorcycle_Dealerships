@@ -5,19 +5,25 @@ import {
   DataTable,
   type TanstackReactTable,
 } from "@/components/kit";
+import { useActionPermission } from "@/modules/auth/presentation/model/useActionPermission";
 import { formatDateLocal } from "@/shared/lib/date-time";
+import { RowActions } from "@/shared/ui/RowActions";
+import { WalletIcon } from "lucide-react";
 import type { PaymentScheduleItem } from "../api/client";
 import { formatCurrencyAmount, SCHEDULE_STATUS_LABELS } from "../lib/labels";
 
 type PaymentScheduleTableProps = {
   data: PaymentScheduleItem[];
   isLoading?: boolean;
+  onPay?: (schedule: PaymentScheduleItem) => void;
 };
 
 export function PaymentScheduleTable({
   data,
   isLoading,
+  onPay,
 }: PaymentScheduleTableProps) {
+  const canPay = useActionPermission(["payments:create"]);
   const columns: TanstackReactTable.ColumnDef<PaymentScheduleItem>[] = useMemo(
     () => [
       createSortableColumn<PaymentScheduleItem>(
@@ -63,8 +69,31 @@ export function PaymentScheduleTable({
           );
         },
       },
+      ...(canPay && onPay
+        ? [
+            {
+              id: "actions",
+              header: "",
+              cell: ({ row }: { row: { original: PaymentScheduleItem } }) => {
+                const status = row.original.status;
+                if (status !== "pending" && status !== "overdue") return null;
+                return (
+                  <RowActions
+                    actions={[
+                      {
+                        label: "ຊຳລະງວດ",
+                        icon: <WalletIcon className="size-4" />,
+                        onClick: () => onPay(row.original),
+                      },
+                    ]}
+                  />
+                );
+              },
+            } as TanstackReactTable.ColumnDef<PaymentScheduleItem>,
+          ]
+        : []),
     ],
-    [],
+    [canPay, onPay],
   );
 
   return (

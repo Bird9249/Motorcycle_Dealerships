@@ -29,6 +29,7 @@ export {
   FormPassword,
   type FormPasswordProps,
   FormRoot,
+  FormSelect,
   FormTextarea,
   useFieldError,
 } from "@/components/form";

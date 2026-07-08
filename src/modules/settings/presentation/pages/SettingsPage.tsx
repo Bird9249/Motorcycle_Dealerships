@@ -1,4 +1,4 @@
-import { Bell, Compass, Coins, Monitor, PanelsTopLeft, UserCog } from "lucide-react";
+import { Bell, Compass, Coins, Landmark, Monitor, PanelsTopLeft, UserCog } from "lucide-react";
 import { Header } from "@/app/layout/Header";
 import { Main } from "@/app/layout/Main";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/kit";
@@ -9,6 +9,7 @@ import { ExchangeRatesSection } from "../ui/ExchangeRatesSection";
 import { LayoutSection } from "../ui/LayoutSection";
 import { NotificationsSection } from "../ui/NotificationsSection";
 import { OnboardingSection } from "../ui/OnboardingSection";
+import { PaymentAccountsSection } from "../ui/PaymentAccountsSection";
 
 const tabs = [
   { value: "account", label: "ບັນຊີ", icon: UserCog },
@@ -16,6 +17,7 @@ const tabs = [
   { value: "notifications", label: "ການແຈ້ງເຕືອນ", icon: Bell },
   { value: "layout", label: "ໂຄງຮ່າງ", icon: PanelsTopLeft },
   { value: "exchange-rates", label: "ອັດຕາແລກປ່ຽນ", icon: Coins },
+  { value: "payment-accounts", label: "ບັນຊີຮັບເງິນ", icon: Landmark },
   { value: "onboarding", label: "ການແນະນຳ", icon: Compass },
 ] as const;
 
@@ -57,6 +59,11 @@ export function SettingsPage() {
           <TabsContent value="exchange-rates">
             <RequirePermissions all={["sales:read"]}>
               <ExchangeRatesSection />
+            </RequirePermissions>
+          </TabsContent>
+          <TabsContent value="payment-accounts">
+            <RequirePermissions all={["payments:read"]}>
+              <PaymentAccountsSection />
             </RequirePermissions>
           </TabsContent>
           <TabsContent value="onboarding">

@@ -3,5 +3,6 @@ export * from "./auth";
 export * from "./customers";
 export * from "./inventory";
 export * from "./outbox";
+export * from "./payments";
 export * from "./rbac";
 export * from "./sales";

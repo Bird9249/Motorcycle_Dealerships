@@ -254,7 +254,7 @@ Step 5: ยืนยัน
 
 - [x] สถานะ order **`completed`** — `POST /api/sales/orders/:id/complete` + ปุ่ม «ປິດການຂາຍ» ใน detail
 - [x] Schedule status **`overdue`** — worker interval + `POST /api/sales/payment-schedules/mark-overdue` + `bun run sales:mark-overdue`
-- [ ] บันทึก **`paid` / `paidAt`** บน schedule — รอโมดูล Payment (03)
+- [x] บันทึก **`paid` / `paidAt`** บน schedule — อัปเดตเมื่อ verify payment (Phase 3.2)
 - [x] (ทางเลือก) เก็บ **`soldAt` ที่ `vehicles`** — set ตอน confirm พร้อม snapshot ที่ `sales_orders.soldAt`
 
 - [x] อัปเดตตาราง **API Endpoints** ด้านบนให้ครบ endpoint จริง
@@ -270,7 +270,7 @@ Step 5: ยืนยัน
 
 #### โมดูลถัดไป (นอก scope Phase 2)
 
-- [ ] **Payment (03)** — รับชำระจากลูกค้า/ไฟแนนซ์ อ้างอิง `salesOrderId`
+- [ ] **Payment (03)** — รับชำระจากลูกค้า/ไฟแนนซ์ (Phase 3.2 record+verify ✅; UI/reject/reconcile ยังเหลือ)
 - [ ] **After-Sales (04)** — warranty record เมื่อ confirm sale; CRM ลูกค้าเต็มรูปแบบ
 
 ## Business Rules
