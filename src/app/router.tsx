@@ -309,11 +309,9 @@ const dashboardRoute = createRoute({
   getParentRoute: () => appRoute,
   path: "/dashboard",
   component: () => (
-    <RequirePermissions all={["reports:read"]}>
-      <LazyPage>
-        <DashboardPage />
-      </LazyPage>
-    </RequirePermissions>
+    <LazyPage>
+      <DashboardPage />
+    </LazyPage>
   ),
 });
 

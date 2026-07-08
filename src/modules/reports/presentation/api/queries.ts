@@ -23,6 +23,7 @@ export const reportsKeys = {
 
 export function useDashboardKpisQuery(
   query: Partial<DashboardQueryDTO> = { period: "month" },
+  options?: { enabled?: boolean },
 ) {
   const q: Partial<DashboardQueryDTO> = {
     period: query.period ?? "month",
@@ -32,6 +33,7 @@ export function useDashboardKpisQuery(
   return useQuery({
     queryKey: reportsKeys.dashboard(q),
     queryFn: () => reportsApi.getDashboard(q),
+    enabled: options?.enabled ?? true,
   });
 }
 

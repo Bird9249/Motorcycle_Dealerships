@@ -6,7 +6,10 @@ import { ExportCsvButton } from "@/modules/reports/presentation/ui/ExportCsvButt
 
 export function DashboardReportDownload() {
   const nav = useNavigate();
+  const canReadReports = useActionPermission(["reports:read"]);
   const canExport = useActionPermission(["reports:export"]);
+
+  if (!canReadReports) return null;
 
   if (canExport) {
     return (
