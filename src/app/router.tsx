@@ -43,6 +43,41 @@ const DashboardPage = lazy(() =>
     }),
   ),
 );
+const ReportsHubPage = lazy(() =>
+  import("@/modules/reports/presentation/pages/ReportsHubPage").then(
+    (module) => ({
+      default: module.ReportsHubPage,
+    }),
+  ),
+);
+const SalesReportPage = lazy(() =>
+  import("@/modules/reports/presentation/pages/SalesReportPage").then(
+    (module) => ({
+      default: module.SalesReportPage,
+    }),
+  ),
+);
+const InventoryReportPage = lazy(() =>
+  import("@/modules/reports/presentation/pages/InventoryReportPage").then(
+    (module) => ({
+      default: module.InventoryReportPage,
+    }),
+  ),
+);
+const PaymentsReportPage = lazy(() =>
+  import("@/modules/reports/presentation/pages/PaymentsReportPage").then(
+    (module) => ({
+      default: module.PaymentsReportPage,
+    }),
+  ),
+);
+const AfterSalesReportPage = lazy(() =>
+  import("@/modules/reports/presentation/pages/AfterSalesReportPage").then(
+    (module) => ({
+      default: module.AfterSalesReportPage,
+    }),
+  ),
+);
 const RolesPage = lazy(() =>
   import("@/modules/roles/presentation/pages/RolesPage").then((module) => ({
     default: module.RolesPage,
@@ -274,9 +309,100 @@ const dashboardRoute = createRoute({
   getParentRoute: () => appRoute,
   path: "/dashboard",
   component: () => (
-    <LazyPage>
-      <DashboardPage />
-    </LazyPage>
+    <RequirePermissions all={["reports:read"]}>
+      <LazyPage>
+        <DashboardPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const reportsSearchSchema = z.object({
+  period: z.enum(["day", "week", "month", "custom"]).optional().catch("month"),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
+  offset: z.coerce.number().optional().catch(0),
+  limit: z.coerce.number().optional().catch(20),
+  sort: z
+    .preprocess((v) => {
+      if (typeof v === "string") {
+        try {
+          return JSON.parse(v);
+        } catch {
+          return v;
+        }
+      }
+      return v;
+    }, z.array(z.object({ field: z.string(), dir: z.enum(["asc", "desc"]) })))
+    .optional(),
+});
+
+const reportsHubRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/reports",
+  component: () => (
+    <RequirePermissions all={["reports:read"]}>
+      <LazyPage>
+        <ReportsHubPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const salesReportRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/reports/sales",
+  validateSearch: (search) => reportsSearchSchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["reports:read"]}>
+      <LazyPage>
+        <SalesReportPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const inventoryReportRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/reports/inventory",
+  component: () => (
+    <RequirePermissions all={["reports:read"]}>
+      <LazyPage>
+        <InventoryReportPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const paymentsReportSearchSchema = z.object({
+  period: z.enum(["day", "week", "month", "custom"]).optional().catch("month"),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
+});
+
+const paymentsReportRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/reports/payments",
+  validateSearch: (search) => paymentsReportSearchSchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["reports:read"]}>
+      <LazyPage>
+        <PaymentsReportPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const afterSalesReportRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/reports/after-sales",
+  validateSearch: (search) => paymentsReportSearchSchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["reports:read"]}>
+      <LazyPage>
+        <AfterSalesReportPage />
+      </LazyPage>
+    </RequirePermissions>
   ),
 });
 
@@ -711,6 +837,11 @@ export const routeTree = rootRoute.addChildren([
   authLayoutRoute.addChildren([loginRoute]),
   appRoute.addChildren([
     dashboardRoute,
+    reportsHubRoute,
+    salesReportRoute,
+    inventoryReportRoute,
+    paymentsReportRoute,
+    afterSalesReportRoute,
     rolesRoute,
     roleCreateRoute,
     roleEditRoute,

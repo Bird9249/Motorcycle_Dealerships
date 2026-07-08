@@ -48,6 +48,10 @@ export const Permissions = {
     createService: "after-sales:create-service",
     manageWarranty: "after-sales:manage-warranty",
   },
+  reports: {
+    read: "reports:read",
+    export: "reports:export",
+  },
 } as const;
 
 export const ALL_PERMISSIONS = Object.entries(Permissions).flatMap(
@@ -67,6 +71,7 @@ export const RESOURCE_LABELS: Record<string, string> = {
   payments: "ການຊຳລະເງິນ",
   customers: "ລູກຄ້າ",
   afterSales: "ຫຼັງການຂາຍ",
+  reports: "ລາຍງານ",
 };
 
 export const ACTION_LABELS: Record<string, string> = {

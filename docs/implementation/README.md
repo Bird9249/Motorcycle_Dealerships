@@ -26,8 +26,20 @@ Phase 2: Customers (CRM)    ← 04-after-sales-warranty.md (Phase 1 ของโ
 Phase 3: Sales & Financing  ← 02-sales-financing.md
 Phase 4: Payment            ← 03-payment-slip-verification.md
 Phase 5: After-Sales        ← 04-after-sales-warranty.md (Phase 4.1–4.4)
-Phase 6: Reports            ← 05-reports-analytics.md (Dashboard KPIs + รายงาน + CSV)
+Phase 6: Reports            ← 05-reports-analytics.md ✅ (Phase 5.1–5.5)
 ```
+
+## สถานะโมดูล Reports (อัปเดต)
+
+| Phase | รายการ | สถานะ |
+|---|---|---|
+| 5.1 | Dashboard KPIs จริง | ✅ |
+| 5.2 | Reports Hub + Sales Report | ✅ |
+| 5.3 | Inventory + Payments Reports | ✅ |
+| 5.4 | After-Sales + CSV Export | ✅ |
+| 5.5 | `test:reports` + docs | ✅ |
+
+ทดสอบ: `bun run test:reports` (ต้องมี dev server + `rbac:sync`)
 
 ## หลักการออกแบบ (ใช้ร่วมทุกโมดูล)
 

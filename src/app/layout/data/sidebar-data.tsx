@@ -1,5 +1,6 @@
 import {
   Bike,
+  BarChart3,
   Database,
   LayoutDashboard,
   ReceiptIcon,
@@ -31,6 +32,12 @@ export const sidebarData: SidebarData = {
           title: "ແຜງຄວບຄຸມ",
           url: "/app/dashboard",
           icon: LayoutDashboard,
+        },
+        {
+          title: "ລາຍງານ",
+          url: "/app/reports",
+          icon: BarChart3,
+          requiredPermissions: ["reports:read"],
         },
       ],
     },

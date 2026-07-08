@@ -14,6 +14,14 @@ export type RouteMeta = {
  */
 export const routeMeta: Record<string, RouteMeta> = {
   "/app/dashboard": { label: "ແຜງຄວບຄຸມ" },
+  "/app/reports": { label: "ລາຍງານ" },
+  "/app/reports/sales": { label: "ລາຍງານການຂາຍ", parent: "/app/reports" },
+  "/app/reports/inventory": { label: "ລາຍງານສຕັອກ", parent: "/app/reports" },
+  "/app/reports/payments": { label: "ລາຍງານການເງິນ", parent: "/app/reports" },
+  "/app/reports/after-sales": {
+    label: "ລາຍງານຫຼັງຂາຍ",
+    parent: "/app/reports",
+  },
   "/app/roles": { label: "ບົດບາດ" },
   "/app/roles/create": { label: "ສ້າງບົດບາດ", parent: "/app/roles" },
   "/app/roles/$id/edit": { label: "ແກ້ໄຂບົດບາດ", parent: "/app/roles" },

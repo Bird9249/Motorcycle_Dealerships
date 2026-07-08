@@ -14,6 +14,7 @@ const staffPermissions = [
   "after-sales:read",
   "payments:create",
   "payments:read",
+  "reports:read",
 ] satisfies PermissionId[];
 
 /** หัวหน้า/เจ้าของ — ยืนยัน/ปฏิเสธสลิป + reconcile */
@@ -28,6 +29,7 @@ const managerPermissions = [
   "after-sales:manage-warranty",
   "after-sales:create-service",
   "audit:read",
+  "reports:export",
 ] satisfies PermissionId[];
 
 export const Roles: Record<string, PermissionId[]> = {

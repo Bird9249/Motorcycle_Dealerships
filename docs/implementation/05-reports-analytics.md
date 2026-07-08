@@ -1,5 +1,7 @@
 # แผน Implement: 05 — Reports & Analytics
 
+> **สถานะ: ✅ เสร็จครบ Phase 5.1–5.5** (ทดสอบ: `bun run test:reports`)
+
 > อ้างอิง: [PROJECT_OVERVIEW.md](../PROJECT_OVERVIEW.md) — ต่อยอดหลังโมดูลธุรกิจ 01–04
 
 ## เป้าหมาย
@@ -31,23 +33,24 @@
 
 | ส่วน | สถานะ |
 |---|---|
-| โมดูล `src/modules/reports/` | ❌ ยังไม่มี |
-| RBAC `reports:*` | ❌ |
-| API `/api/reports/*` | ❌ |
-| Dashboard (`/app/dashboard`) | ⚠️ UI จาก template โรงแรม + `mock.ts` |
+| โมดูล `src/modules/reports/` | ✅ ครบ Phase 5.1–5.5 |
+| RBAC `reports:*` | ✅ `reports:read` (+ `export` สำหรับ manager) |
+| API `/api/reports/*` | ✅ ครบทุก report + CSV export |
+| Dashboard (`/app/dashboard`) | ✅ KPI จริงจาก DB |
+| Reports Hub (`/app/reports`) | ✅ hub + รายงาน 4 ประเภท |
 | `WarrantyExpiryAlert` | ✅ ข้อมูลจริงจาก after-sales API |
-| ปุ่ม «ດາວໂຫລດລາຍງານ» | ❌ ไม่มี handler |
+| ปุ่ม «ດາວໂຫລດລາຍງານ» | ✅ export sales เดือนนี้ / ไป hub |
 | Reconciliation summary | ✅ อยู่ใน payments module (ใช้ซ้ำได้) |
 | Pending payments count | ✅ `countPendingPayments` + sidebar badge |
 
-## ปัญหาที่ต้องแก้ (จาก codebase)
+## ปัญหาที่ต้องแก้ (จาก codebase) — ✅ แก้แล้ว
 
-| ปัญหา | แนวทาง |
-|---|---|
-| `StatCards`, `RevenueChart`, `OccupancyChart`, `RecentBookings`, `RoomStatus` ใช้ mock โรงแรม | แทนด้วย KPI/กราฟร้านมอเตอร์ หรือลบ component ที่ไม่เกี่ยว |
-| ไม่มีหน้ารายงานแยก | เพิ่ม `/app/reports/*` |
-| หลายสกุลเงิน (LAK/THB/USD) | **ห้ามรวมยอดข้ามสกุล** — แสดงแยกตาม currency |
-| วันที่รายงาน | ใช้ timezone ร้าน (default `Asia/Vientiane`) + filter `dateFrom` / `dateTo` |
+| ปัญหา | แนวทาง | สถานะ |
+|---|---|---|
+| `StatCards`, `RevenueChart`, `OccupancyChart`, `RecentBookings`, `RoomStatus` ใช้ mock โรงแรม | แทนด้วย KPI/กราฟร้านมอเตอร์ หรือลบ component ที่ไม่เกี่ยว | ✅ ลบแล้ว |
+| ไม่มีหน้ารายงานแยก | เพิ่ม `/app/reports/*` | ✅ |
+| หลายสกุลเงิน (LAK/THB/USD) | **ห้ามรวมยอดข้ามสกุล** — แสดงแยกตาม currency | ✅ |
+| วันที่รายงาน | ใช้ timezone ร้าน (default `Asia/Vientiane`) + filter `dateFrom` / `dateTo` | ✅ preset + custom |
 
 ## Module Structure (แผน)
 
@@ -70,7 +73,8 @@ src/modules/reports/
 │       ├── sales-summary.ts
 │       ├── inventory-snapshot.ts
 │       ├── payments-summary.ts
-│       └── after-sales-summary.ts
+│       ├── after-sales-summary.ts
+│       └── exports.ts
 └── presentation/
     ├── api/client.ts, queries.ts
     ├── lib/labels.ts, format.ts
@@ -145,7 +149,8 @@ reports: {
 | Method | Path | Permission | รายละเอียด |
 |---|---|---|---|
 | GET | `/api/reports/dashboard` | `reports:read` | KPI สรุป + sparkline data สำหรับแผงควบคุม |
-| GET | `/api/reports/overview` | `reports:read` | สรุปสั้นสำหรับ Reports hub (links + counts) |
+
+> `GET /api/reports/overview` — **นอก MVP** (Reports Hub ใช้การ์ดลิงก์แทน)
 
 **Query ร่วม (`DateRangeQuerySchema`):**
 
@@ -227,49 +232,49 @@ reports: {
 
 ### Phase 5.1 — Dashboard KPIs จริง (4–5 วัน)
 
-- [ ] สร้าง `reports` module skeleton + `GET /api/reports/dashboard`
-- [ ] Repo: `dashboard-kpis.ts` (inventory, sales, payments, after-sales aggregates)
-- [ ] RBAC `reports:read` + `rbac:sync` + ผูก role manager/admin
-- [ ] แทน mock ใน Dashboard:
-  - [ ] `DealershipKpiCards` — สต็อก, ขายเดือนนี้, รับชำระ verified, pending
-  - [ ] `SalesTrendChart` — จำนวนขาย/ยอดแยกสกุล 7–30 วัน
-  - [ ] `RecentSalesTable` — คำสั่งขายล่าสุด (จาก `sales_orders`)
-  - [ ] `InventoryStatusSummary` — แท่งสถานะ in_stock / reserved / sold
-- [ ] ลบหรือ deprecate `mock.ts` + component โรงแรมที่ไม่ใช้
-- [ ] อัปเดต copy Dashboard: «ພາບລວມຮ້ານຈຳໜ່າຍມໍເຕີ»
+- [x] สร้าง `reports` module skeleton + `GET /api/reports/dashboard`
+- [x] Repo: `dashboard-kpis.ts` (inventory, sales, payments, after-sales aggregates)
+- [x] RBAC `reports:read` + `rbac:sync` + ผูก role manager/admin (+ staff read)
+- [x] แทน mock ใน Dashboard:
+  - [x] `DealershipKpiCards` — สต็อก, ขายเดือนนี้, รับชำระ verified, pending
+  - [x] `SalesTrendChart` — จำนวนขาย/ยอดแยกสกุล 7–30 วัน
+  - [x] `RecentSalesTable` — คำสั่งขายล่าสุด (จาก `sales_orders`)
+  - [x] `InventoryStatusSummary` — แท่งสถานะ in_stock / reserved / sold
+- [x] ลบหรือ deprecate `mock.ts` + component โรงแรมที่ไม่ใช้
+- [x] อัปเดต copy Dashboard: «ພາບລວມຮ້ານຈຳໜ່າຍມໍເຕີ»
 
 ### Phase 5.2 — Reports Hub + Sales Report (4–5 วัน)
 
-- [ ] `GET /api/reports/sales` + `SalesReportPage`
-- [ ] `ReportDateRangeFilter` (preset: วันนี้ / สัปดาห์ / เดือน / กำหนดเอง)
-- [ ] ตารางคำสั่งขายในช่วง + สรุปตาม `paymentType`, `status`, `saleCurrency`
-- [ ] Route `/app/reports`, `/app/reports/sales` + sidebar «ລາຍງານ»
-- [ ] `ReportsHubPage` — การ์ด 4 รายงาน
+- [x] `GET /api/reports/sales` + `SalesReportPage`
+- [x] `ReportDateRangeFilter` (preset: วันนี้ / สัปดาห์ / เดือน / กำหนดเอง)
+- [x] ตารางคำสั่งขายในช่วง + สรุปตาม `paymentType`, `status`, `saleCurrency`
+- [x] Route `/app/reports`, `/app/reports/sales` + sidebar «ລາຍງານ»
+- [x] `ReportsHubPage` — การ์ด 4 รายงาน
 
 ### Phase 5.3 — Inventory & Payments Reports (4–5 วัน)
 
-- [ ] `GET /api/reports/inventory` + `InventoryReportPage`
-  - [ ] Breakdown: status, vehicleType (ICE/EV), brand (top N)
-  - [ ] มูลค่าสต็อก: sum `costPrice` / `listPrice` **แยกสกุล**
-- [ ] `GET /api/reports/payments` + `PaymentsReportPage`
-  - [ ] Reuse logic จาก `sumVerifiedAmountsByAccountForDay` ขยายเป็นช่วงวัน
-  - [ ] แสดง pending count + ลิงก์ reconciliation
-- [ ] กราฟ `PaymentByAccountChart`, `InventoryStatusChart`
+- [x] `GET /api/reports/inventory` + `InventoryReportPage`
+  - [x] Breakdown: status, vehicleType (ICE/EV), brand (top N)
+  - [x] มูลค่าสต็อก: sum `costPrice` / `listPrice` **แยกสกุล**
+- [x] `GET /api/reports/payments` + `PaymentsReportPage`
+  - [x] Reuse logic จาก `sumVerifiedAmountsByAccountForDay` ขยายเป็นช่วงวัน
+  - [x] แสดง pending count + ลิงก์ reconciliation
+- [x] กราฟ `PaymentByAccountChart`, `InventoryStatusChart`
 
 ### Phase 5.4 — After-Sales Report + Export CSV (3–4 วัน)
 
-- [ ] `GET /api/reports/after-sales` + `AfterSalesReportPage`
-  - [ ] Reuse `listExpiringWarranties` + count service by `serviceType`
-- [ ] `reports:export` permission
-- [ ] `GET /api/reports/{sales|payments|inventory}/export` → `text/csv`
-- [ ] `ExportCsvButton` ในแต่ละหน้ารายงาน
-- [ ] ปุ่ม «ດາວໂຫລດລາຍງານ» บน Dashboard → ไป hub หรือ export sales เดือนปัจจุบัน
+- [x] `GET /api/reports/after-sales` + `AfterSalesReportPage`
+  - [x] Reuse `listExpiringWarranties` + count service by `serviceType`
+- [x] `reports:export` permission
+- [x] `GET /api/reports/{sales|payments|inventory}/export` → `text/csv`
+- [x] `ExportCsvButton` ในแต่ละหน้ารายงาน
+- [x] ปุ่ม «ດາວໂຫລດລາຍງານ» บน Dashboard → ไป hub หรือ export sales เดือนปัจจุบัน
 
 ### Phase 5.5 — Testing & Docs (2 วัน)
 
-- [ ] `test-reports-acceptance.ts` — dashboard KPI shape, sales summary, CSV headers
-- [ ] `bun run test:reports` ใน `package.json`
-- [ ] อัปเดต doc นี้ + [README.md](./README.md) สถานะ Phase 5
+- [x] `test-reports-acceptance.ts` — dashboard KPI shape, sales summary, CSV headers
+- [x] `bun run test:reports` ใน `package.json`
+- [x] อัปเดต doc นี้ + [README.md](./README.md) สถานะ Phase 5
 
 ## กฎธุรกิจ (Business Rules)
 
@@ -293,25 +298,25 @@ reports: {
 
 ## Acceptance Criteria
 
-- [ ] Dashboard แสดงตัวเลขจาก DB จริง ไม่มี mock โรงแรม
-- [ ] กรองรายงานตามช่วงวันที่ได้
-- [ ] ยอดเงินแยกตามสกุลเงิน ไม่รวมผิดพลาดข้าม LAK/THB/USD
-- [ ] Export CSV คำสั่งขายและการชำระได้
-- [ ] RBAC `reports:read` / `reports:export` ทำงาน
-- [ ] `bun run test:reports` ผ่าน
+- [x] Dashboard แสดงตัวเลขจาก DB จริง ไม่มี mock โรงแรม
+- [x] กรองรายงานตามช่วงวันที่ได้
+- [x] ยอดเงินแยกตามสกุลเงิน ไม่รวมผิดพลาดข้าม LAK/THB/USD
+- [x] Export CSV คำสั่งขายและการชำระได้
+- [x] RBAC `reports:read` / `reports:export` ทำงาน
+- [x] `bun run test:reports` ผ่าน
 
 ## Definition of Done
 
 อ้างอิง [README.md](./README.md) § Definition of Done:
 
-- [ ] ไม่มี schema ใหม่ (MVP) หรือ document เหตุผลถ้าเพิ่ม
-- [ ] RBAC `reports:*` + `rbac:sync`
-- [ ] API routes + Zod contracts + `map-error.ts`
-- [ ] Repository aggregate queries (index-friendly: `soldAt`, `paidAt`, `status`)
-- [ ] React pages + TanStack Query
-- [ ] Sidebar + routes + `route-meta.ts`
-- [ ] ลบ/แทน dashboard mock components
-- [ ] Acceptance script + อัปเดต doc สถานะ
+- [x] ไม่มี schema ใหม่ (MVP) หรือ document เหตุผลถ้าเพิ่ม
+- [x] RBAC `reports:*` + `rbac:sync`
+- [x] API routes + Zod contracts + `map-error.ts`
+- [x] Repository aggregate queries (index-friendly: `soldAt`, `paidAt`, `status`)
+- [x] React pages + TanStack Query
+- [x] Sidebar + routes + `route-meta.ts`
+- [x] ลบ/แทน dashboard mock components
+- [x] Acceptance script + อัปเดต doc สถานะ
 
 ## โมดูลที่เกี่ยวข้อง
 
@@ -341,12 +346,13 @@ Phase 5.5  Tests + Docs
 
 | ไฟล์ | ใช้เป็นแนวทาง |
 |---|---|
-| `src/modules/dashboard/presentation/data/mock.ts` | **ลบ/แทน** |
+| `src/modules/reports/domain/repo/dashboard-kpis.ts` | KPI แผงควบคุม |
+| `src/modules/reports/domain/repo/exports.ts` | CSV export sales/payments/inventory |
 | `src/modules/payments/domain/repo/payments.ts` | `sumVerifiedAmountsByAccountForDay`, `countPendingPayments` |
 | `src/modules/payments/domain/service/reconciliation.ts` | `getReconciliationSummary` |
 | `src/modules/after-sales/domain/repo/warranties.ts` | `listExpiringWarranties` |
 | `src/modules/sales/domain/repo/sales-orders.ts` | list/filter pattern สำหรับ sales report |
-| `src/modules/inventory/domain/repo/list-vehicles.ts` | filter + count by status |
+| `src/server/scripts/test-reports-acceptance.ts` | `bun run test:reports` |
 
 ## นอกขอบเขต MVP (บันทึกไว้ Phase 6+)
 

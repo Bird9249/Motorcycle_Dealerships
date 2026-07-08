@@ -83,6 +83,7 @@
     "sales:mark-overdue": "bun run src/server/scripts/mark-overdue-schedules.ts",
     "test:sales": "bun run src/server/scripts/test-sales-core-acceptance.ts && bun run src/server/scripts/test-sales-financing-acceptance.ts && bun run src/server/scripts/test-sales-multi-currency-acceptance.ts",
     "test:payments": "bun run src/server/scripts/test-payments-core-acceptance.ts && bun run src/server/scripts/test-payments-schedule-acceptance.ts && bun run src/server/scripts/test-payments-reconciliation-acceptance.ts",
+    "test:reports": "bun run src/server/scripts/test-reports-acceptance.ts",
     "start": "NODE_ENV=production bun index.ts",
     "worker": "WORKER_PORT=3001 bun run src/server/worker.ts"
   },

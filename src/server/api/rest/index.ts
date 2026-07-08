@@ -5,6 +5,7 @@ import { authRoutes } from "@/modules/auth/api";
 import { inventoryRoutes } from "@/modules/inventory/api";
 import { masterDataRoutes } from "@/modules/master-data/api";
 import { paymentsModuleRoutes } from "@/modules/payments/api";
+import { reportsModuleRoutes } from "@/modules/reports/api";
 import { salesModuleRoutes } from "@/modules/sales/api";
 import { rolesRoutes } from "@/modules/roles/api";
 import { uploadRoutes } from "@/modules/upload/api";
@@ -21,5 +22,6 @@ export function createRestRoutes() {
     .use(masterDataRoutes)
     .use(salesModuleRoutes)
     .use(paymentsModuleRoutes)
-    .use(afterSalesModuleRoutes);
+    .use(afterSalesModuleRoutes)
+    .use(reportsModuleRoutes);
 }

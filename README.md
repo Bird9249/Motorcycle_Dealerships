@@ -171,6 +171,7 @@ bun run compile           # Compile server for deployment
 
 # Utilities
 bun run rbac:sync         # Sync RBAC permissions from code
+bun run test:reports      # Reports & Analytics acceptance (Phase 5)
 ```
 
 ### Environment Variables
