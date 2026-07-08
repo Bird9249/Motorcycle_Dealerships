@@ -90,6 +90,11 @@ export type CustomerItem = {
   updatedAt: string;
 };
 
+export type CustomerDetail = CustomerItem & {
+  salesOrders: SalesOrderListItem[];
+  salesOrderCount: number;
+};
+
 export type ExchangeRateItem = {
   id: string;
   baseCurrency: "LAK" | "THB" | "USD";
@@ -262,7 +267,7 @@ export const salesApi = {
   },
 
   getCustomer(id: string) {
-    return fetcher.get<CustomerItem>(`${config.apiUrl}/sales/customers/${id}`);
+    return fetcher.get<CustomerDetail>(`${config.apiUrl}/sales/customers/${id}`);
   },
 
   createCustomer(input: CreateCustomerDTO) {
@@ -276,6 +281,12 @@ export const salesApi = {
     return fetcher.put<CustomerItem>(
       `${config.apiUrl}/sales/customers/${id}`,
       input,
+    );
+  },
+
+  deleteCustomer(id: string) {
+    return fetcher.delete<CustomerItem>(
+      `${config.apiUrl}/sales/customers/${id}`,
     );
   },
 

@@ -37,6 +37,17 @@ export const Permissions = {
     reject: "payments:reject",
     reconcile: "payments:reconcile",
   },
+  customers: {
+    create: "customers:create",
+    read: "customers:read",
+    update: "customers:update",
+    delete: "customers:delete",
+  },
+  afterSales: {
+    read: "after-sales:read",
+    createService: "after-sales:create-service",
+    manageWarranty: "after-sales:manage-warranty",
+  },
 } as const;
 
 export const ALL_PERMISSIONS = Object.entries(Permissions).flatMap(
@@ -54,6 +65,8 @@ export const RESOURCE_LABELS: Record<string, string> = {
   masterData: "ຂໍ້ມູນຫຼັກ",
   sales: "ການຂາຍ",
   payments: "ການຊຳລະເງິນ",
+  customers: "ລູກຄ້າ",
+  afterSales: "ຫຼັງການຂາຍ",
 };
 
 export const ACTION_LABELS: Record<string, string> = {

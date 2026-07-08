@@ -1,4 +1,4 @@
-import { EditIcon } from "lucide-react";
+import { EditIcon, EyeIcon } from "lucide-react";
 import { useMemo } from "react";
 import {
   createSortableColumn,
@@ -20,6 +20,7 @@ type CustomersTableProps = {
   sortOrder?: "asc" | "desc";
   onSortingChange?: (id: string, desc: boolean) => void;
   onEdit: (customer: CustomerItem) => void;
+  onView: (customer: CustomerItem) => void;
 };
 
 export function CustomersTable({
@@ -33,6 +34,7 @@ export function CustomersTable({
   sortOrder,
   onSortingChange,
   onEdit,
+  onView,
 }: CustomersTableProps) {
   const columns: TanstackReactTable.ColumnDef<CustomerItem>[] = useMemo(
     () => [
@@ -90,6 +92,11 @@ export function CustomersTable({
           <RowActions
             actions={[
               {
+                label: "ເບິ່ງ",
+                icon: <EyeIcon className="size-4" />,
+                onClick: () => onView(row.original),
+              },
+              {
                 label: "ແກ້ໄຂ",
                 icon: <EditIcon className="size-4" />,
                 onClick: () => onEdit(row.original),
@@ -99,7 +106,7 @@ export function CustomersTable({
         ),
       },
     ],
-    [onEdit],
+    [onEdit, onView],
   );
 
   return (

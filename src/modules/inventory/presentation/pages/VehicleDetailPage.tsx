@@ -18,6 +18,8 @@ import {
   cn,
 } from "@/components/kit";
 import { useActionPermission } from "@/modules/auth/presentation/model/useActionPermission";
+import { useVehicleServiceHistoryQuery } from "@/modules/after-sales/presentation/api/queries";
+import { ServiceHistoryTable } from "@/modules/after-sales/presentation/ui/ServiceHistoryTable";
 import { formatDateLocal, formatDateTimeLocal } from "@/shared/lib/date-time";
 import { QueryState } from "@/shared/ui/QueryState";
 import { useVehicleQuery } from "../api/queries";
@@ -57,6 +59,10 @@ export function VehicleDetailPage() {
   const { id } = useParams({ from: "/app/inventory/vehicles/$id" });
   const { data, ...result } = useVehicleQuery(id);
   const canUpdate = useActionPermission(["inventory:update"]);
+  const canReadService = useActionPermission(["after-sales:read"]);
+  const serviceHistory = useVehicleServiceHistoryQuery(
+    canReadService ? id : "",
+  );
 
   const vehicle = data;
   const locked =
@@ -189,6 +195,34 @@ export function VehicleDetailPage() {
                 <BatteryInfoSection vehicle={vehicle} />
 
                 <VehicleStatusTimeline vehicleId={vehicle.id} />
+
+                {canReadService ? (
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between gap-2">
+                      <CardTitle className="text-base">ປະຫວັດບໍລິການ</CardTitle>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          nav({
+                            to: "/app/after-sales/service",
+                            search: { vehicleId: vehicle.id },
+                          })
+                        }
+                      >
+                        ເພີ່ມ check-in
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      <ServiceHistoryTable
+                        data={serviceHistory.data?.data ?? []}
+                        isLoading={serviceHistory.isLoading}
+                        showCustomer
+                        compact
+                      />
+                    </CardContent>
+                  </Card>
+                ) : null}
 
                 <Card>
                   <CardHeader>

@@ -2,6 +2,8 @@ export { cancelSaleService } from "./cancel-sale";
 export { completeSaleService } from "./complete-sale";
 export { confirmSaleService } from "./confirm-sale";
 export { createCustomerService } from "./create-customer";
+export { deleteCustomerService } from "./delete-customer";
+export { getCustomerDetailService } from "./get-customer-detail";
 export { createExchangeRateService } from "./create-exchange-rate";
 export { upsertExchangeRatesService } from "./upsert-exchange-rates";
 export { createSaleService } from "./create-sale";

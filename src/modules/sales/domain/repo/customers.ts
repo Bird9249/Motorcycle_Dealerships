@@ -88,3 +88,11 @@ export async function updateCustomerById(
     .returning(customerSelect);
   return updated ?? null;
 }
+
+export async function deleteCustomerById(id: string, client: DbTransaction) {
+  const [deleted] = await client
+    .delete(customers)
+    .where(eq(customers.id, id))
+    .returning(customerSelect);
+  return deleted ?? null;
+}

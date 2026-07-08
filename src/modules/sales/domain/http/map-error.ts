@@ -24,6 +24,7 @@ export function mapSalesError(
     case "VALIDATION_FINANCE_COMPANY":
     case "VALIDATION_LEASING":
     case "VALIDATION_EXCHANGE_RATE":
+    case "CUSTOMER_HAS_SALES":
       return status(422, { error: error.code, message: error.message });
     default:
       return status(500, { error: error.code, message: error.message });

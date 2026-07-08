@@ -1,6 +1,6 @@
 # แผน Implementation — Motorcycle Dealership ERP (MVP)
 
-เอกสารชุดนี้แยกแผน implement ตาม 4 โมดูลหลักใน [PROJECT_OVERVIEW.md](../PROJECT_OVERVIEW.md)
+เอกสารชุดนี้แยกแผน implement ตามโมดูลธุรกิจใน [PROJECT_OVERVIEW.md](../PROJECT_OVERVIEW.md) และต่อยอด Reports หลัง 01–04
 
 ## ไฟล์แผน
 
@@ -11,6 +11,7 @@
 | 2 | Sales & Financing Options | [02-sales-financing.md](./02-sales-financing.md) |
 | 3 | Payment & Slip Verification | [03-payment-slip-verification.md](./03-payment-slip-verification.md) |
 | 4 | After-Sales & Warranty | [04-after-sales-warranty.md](./04-after-sales-warranty.md) |
+| 5 | Reports & Analytics | [05-reports-analytics.md](./05-reports-analytics.md) |
 
 ## ลำดับการ implement ที่แนะนำ
 
@@ -24,7 +25,8 @@ Phase 1: Inventory          ← 01-inventory-vehicle-tracking.md
 Phase 2: Customers (CRM)    ← 04-after-sales-warranty.md (Phase 1 ของโมดูล)
 Phase 3: Sales & Financing  ← 02-sales-financing.md
 Phase 4: Payment            ← 03-payment-slip-verification.md
-Phase 5: After-Sales        ← 04-after-sales-warranty.md (Phase 2–3)
+Phase 5: After-Sales        ← 04-after-sales-warranty.md (Phase 4.1–4.4)
+Phase 6: Reports            ← 05-reports-analytics.md (Dashboard KPIs + รายงาน + CSV)
 ```
 
 ## หลักการออกแบบ (ใช้ร่วมทุกโมดูล)

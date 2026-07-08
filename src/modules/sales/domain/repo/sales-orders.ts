@@ -351,3 +351,14 @@ export async function getSalesOrderSnapshot(id: string, client: DbTransaction) {
     .limit(1);
   return rows[0] ?? null;
 }
+
+export async function countSalesOrdersByCustomerId(
+  customerId: string,
+  client: DbTransaction,
+) {
+  const countRow = await client
+    .select({ count: sql<number>`cast(count(*) as int)` })
+    .from(salesOrders)
+    .where(eq(salesOrders.customerId, customerId));
+  return countRow[0]?.count ?? 0;
+}

@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { afterSalesModuleRoutes } from "@/modules/after-sales/api";
 import { auditRoutes } from "@/modules/audit/api";
 import { authRoutes } from "@/modules/auth/api";
 import { inventoryRoutes } from "@/modules/inventory/api";
@@ -19,5 +20,6 @@ export function createRestRoutes() {
     .use(inventoryRoutes)
     .use(masterDataRoutes)
     .use(salesModuleRoutes)
-    .use(paymentsModuleRoutes);
+    .use(paymentsModuleRoutes)
+    .use(afterSalesModuleRoutes);
 }

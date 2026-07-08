@@ -27,9 +27,9 @@ import { CustomerForm, customerToFormValues } from "../ui/CustomerForm";
 import { CustomersTable } from "../ui/CustomersTable";
 
 export function CustomersPage() {
-  const nav = useNavigate({ from: "/app/sales/customers" });
+  const nav = useNavigate({ from: "/app/customers" });
   const search = useSearch({
-    from: "/app/sales/customers",
+    from: "/app/customers",
   }) as CustomersListQueryDTO;
 
   const [modal, setModal] = useState<{
@@ -45,7 +45,7 @@ export function CustomersPage() {
 
   const createCustomer = useCreateCustomer();
   const updateCustomer = useUpdateCustomer(modal.customer?.id ?? "");
-  const canCreate = useActionPermission(["sales:create"]);
+  const canCreate = useActionPermission(["customers:create"]);
 
   const debouncedSearch = useDebounceCallback((q: string) => {
     nav({
@@ -109,6 +109,12 @@ export function CustomersPage() {
                 nav({ search: { ...search, offset, limit } })
               }
               onEdit={(customer) => setModal({ open: true, customer })}
+              onView={(customer) =>
+                nav({
+                  to: "/app/customers/$id",
+                  params: { id: customer.id },
+                })
+              }
             />
           )}
         </div>

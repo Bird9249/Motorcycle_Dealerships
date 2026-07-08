@@ -361,6 +361,147 @@ async function main() {
     fail("Vehicle soldAt on confirm", `soldAt=${vehSold.soldAt ?? "null"}`);
   }
 
+  const warrantiesRes = await jsonFetch(
+    `/api/after-sales/warranties?salesOrderId=${orderId}`,
+    {},
+    cookie,
+  );
+  const warrantiesPage = warrantiesRes.body as {
+    data?: Array<{
+      warrantyType?: string;
+      durationMonths?: number;
+      status?: string;
+      batterySerialNumber?: string | null;
+    }>;
+    meta?: { total?: number };
+  };
+  const warranties = warrantiesPage.data ?? [];
+  const types = warranties.map((w) => w.warrantyType).sort();
+  if (
+    warrantiesRes.status === 200 &&
+    warranties.length === 2 &&
+    types.includes("vehicle") &&
+    types.includes("motor") &&
+    warranties.every((w) => w.status === "active" && (w.durationMonths ?? 0) > 0)
+  ) {
+    pass("Auto-create ICE warranties", types.join(", "));
+  } else {
+    fail("Auto-create ICE warranties", JSON.stringify(warrantiesRes.body));
+  }
+
+  const expiringRes = await jsonFetch(
+    "/api/after-sales/warranties/expiring?days=30&limit=10",
+    {},
+    cookie,
+  );
+  const expiring = expiringRes.body as {
+    days?: number;
+    count?: number;
+    items?: unknown[];
+  };
+  if (
+    expiringRes.status === 200 &&
+    expiring.days === 30 &&
+    typeof expiring.count === "number" &&
+    Array.isArray(expiring.items)
+  ) {
+    pass("Expiring warranties endpoint", `count=${expiring.count}`);
+  } else {
+    fail("Expiring warranties endpoint", JSON.stringify(expiringRes.body));
+  }
+
+  const settingsRes = await jsonFetch(
+    "/api/after-sales/warranty-settings",
+    {},
+    cookie,
+  );
+  const settings = settingsRes.body as {
+    vehicleMonths?: number;
+    motorMonths?: number;
+    batteryMonths?: number;
+  };
+  if (
+    settingsRes.status === 200 &&
+    settings.vehicleMonths === 24 &&
+    settings.motorMonths === 12 &&
+    settings.batteryMonths === 36
+  ) {
+    pass("Warranty settings defaults", "24/12/36");
+  } else {
+    fail("Warranty settings defaults", JSON.stringify(settingsRes.body));
+  }
+
+  const serviceCreateRes = await jsonFetch(
+    "/api/after-sales/service-records",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        vehicleId: vehicleConfirmId,
+        customerId,
+        serviceType: "oil_change",
+        odometerKm: 1500,
+        description: "ປ່ຽນນ້ຳມັນເຄື່ອງຄັ້ງທຳອິດ",
+        performedAt: new Date().toISOString(),
+      }),
+    },
+    cookie,
+  );
+  const serviceRecord = serviceCreateRes.body as {
+    id?: string;
+    serviceType?: string;
+    vehicleId?: string;
+    customerId?: string;
+  };
+  if (
+    serviceCreateRes.status === 200 &&
+    serviceRecord.id &&
+    serviceRecord.serviceType === "oil_change" &&
+    serviceRecord.vehicleId === vehicleConfirmId &&
+    serviceRecord.customerId === customerId
+  ) {
+    pass("Create service record", serviceRecord.id);
+  } else {
+    fail("Create service record", JSON.stringify(serviceCreateRes.body));
+  }
+
+  const serviceListRes = await jsonFetch(
+    `/api/after-sales/service-records?vehicleId=${vehicleConfirmId}`,
+    {},
+    cookie,
+  );
+  const serviceList = serviceListRes.body as {
+    data?: unknown[];
+    meta?: { total?: number };
+  };
+  if (
+    serviceListRes.status === 200 &&
+    (serviceList.meta?.total ?? 0) >= 1 &&
+    Array.isArray(serviceList.data)
+  ) {
+    pass("List service records by vehicle", `total=${serviceList.meta?.total}`);
+  } else {
+    fail("List service records by vehicle", JSON.stringify(serviceListRes.body));
+  }
+
+  const vehicleHistoryRes = await jsonFetch(
+    `/api/after-sales/vehicles/${vehicleConfirmId}/history`,
+    {},
+    cookie,
+  );
+  const vehicleHistory = vehicleHistoryRes.body as {
+    data?: unknown[];
+    meta?: { total?: number };
+  };
+  if (
+    vehicleHistoryRes.status === 200 &&
+    (vehicleHistory.meta?.total ?? 0) >= 1 &&
+    Array.isArray(vehicleHistory.data)
+  ) {
+    pass("Vehicle service history", `total=${vehicleHistory.meta?.total}`);
+  } else {
+    fail("Vehicle service history", JSON.stringify(vehicleHistoryRes.body));
+  }
+
   const completeRes = await jsonFetch(
     `/api/sales/orders/${orderId}/complete`,
     { method: "POST" },

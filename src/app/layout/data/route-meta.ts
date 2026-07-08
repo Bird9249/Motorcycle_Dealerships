@@ -49,6 +49,11 @@ export const routeMeta: Record<string, RouteMeta> = {
     label: "ລູກຄ້າ",
     parent: "/app/sales",
   },
+  "/app/customers": { label: "ລູກຄ້າ" },
+  "/app/customers/$id": {
+    label: "ລາຍລະອຽດລູກຄ້າ",
+    parent: "/app/customers",
+  },
   "/app/payments": { label: "ການຊຳລະເງິນ" },
   "/app/payments/new": {
     label: "ຮັບຊຳລະ",
@@ -69,6 +74,12 @@ export const routeMeta: Record<string, RouteMeta> = {
   "/app/audit/$id": { label: "ລາຍລະອຽດການກວດກາ", parent: "/app/audit" },
   "/app/profile": { label: "ໂປຣໄຟລ໌" },
   "/app/settings": { label: "ການຕັ້ງຄ່າ" },
+  "/app/after-sales/warranties": { label: "ປະກັນ" },
+  "/app/after-sales/warranties/$id": {
+    label: "ລາຍລະອຽດປະກັນ",
+    parent: "/app/after-sales/warranties",
+  },
+  "/app/after-sales/service": { label: "ເຂົ້າບໍລິການ" },
 };
 
 export const HOME_ROUTE = "/app/dashboard" satisfies LinkProps["to"];

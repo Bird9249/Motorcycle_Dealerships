@@ -1,3 +1,4 @@
+import { createWarrantiesOnSaleConfirm } from "@/modules/after-sales/domain/service/create-warranty-on-sale";
 import { updateVehicleById } from "@/modules/inventory/domain/repo/list-vehicles";
 import { AppError } from "@/shared/errors";
 import { nowDate } from "@/shared/lib/date-time";
@@ -113,6 +114,13 @@ export async function confirmSaleService(
     { status: "sold", soldAt: now, updatedAt: now },
     client,
   );
+
+  await createWarrantiesOnSaleConfirm(client, {
+    salesOrderId: params.id,
+    vehicleId: existing.vehicleId,
+    customerId: existing.customerId,
+    soldAt: now,
+  });
 
   const refreshed = await getSalesOrderById(params.id, client);
   return { before: existing, updated: refreshed ?? updated };

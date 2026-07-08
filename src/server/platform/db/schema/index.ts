@@ -1,3 +1,4 @@
+export * from "./after-sales";
 export * from "./audit";
 export * from "./auth";
 export * from "./customers";

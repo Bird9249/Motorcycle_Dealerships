@@ -26,7 +26,7 @@ import {
   UpdateSalesOrderSchema,
   UpsertExchangeRatesSchema,
 } from "../contracts";
-import { getCustomerRecordById, listCustomers } from "../repo/customers";
+import { listCustomers } from "../repo/customers";
 import { listExchangeRateHistory } from "../repo/exchange-rates-admin";
 import { listFinanceCompanies } from "../repo/finance-companies";
 import { markOverduePaymentSchedules } from "../repo/payment-schedules-overdue";
@@ -44,6 +44,8 @@ import {
   createCustomerService,
   createFinanceCompanyService,
   createSaleService,
+  deleteCustomerService,
+  getCustomerDetailService,
   getOrderPriceConversionsService,
   previewPriceConversionsService,
   previewScheduleFromInput,
@@ -78,6 +80,32 @@ async function auditSalesEvent(
     buildAuditEvent(auditCtx, {
       action: params.action,
       entityType: "sales_order",
+      entityId: params.entityId,
+      before: params.before,
+      after: params.after,
+      result: params.result,
+      error: params.error,
+    }),
+  ]);
+}
+
+async function auditCustomerEvent(
+  ctx: AuditCtx,
+  db: Parameters<typeof appendAudit>[0],
+  params: {
+    action: string;
+    entityId?: string;
+    before?: unknown;
+    after?: unknown;
+    result?: "success" | "failed";
+    error?: string;
+  },
+) {
+  const auditCtx = getAuditContextFromRequest(ctx.request, ctx);
+  await appendAudit(db, [
+    buildAuditEvent(auditCtx, {
+      action: params.action,
+      entityType: "customer",
       entityId: params.entityId,
       before: params.before,
       after: params.after,
@@ -455,17 +483,23 @@ export const salesRoutes = new Elysia()
     "/customers",
     async ({ db, query }) => listCustomers(query, db),
     {
-      beforeHandle: requirePermission(Permissions.sales.read),
+      beforeHandle: requirePermission(Permissions.customers.read),
       query: CustomersListQuerySchema,
     },
   )
   .post(
     "/customers",
-    async ({ db, body, status, user }) => {
+    async (ctx) => {
+      const { db, body, status, user } = ctx;
       try {
         const { created } = await createCustomerService(db, {
           input: body,
           createdBy: user?.id ?? null,
+        });
+        await auditCustomerEvent(auditCtxFromRoute(ctx), db, {
+          action: "CUSTOMER.CREATE",
+          entityId: created.id,
+          after: created,
         });
         return status(201, created);
       } catch (error) {
@@ -473,19 +507,21 @@ export const salesRoutes = new Elysia()
       }
     },
     {
-      beforeHandle: requirePermission(Permissions.sales.create),
+      beforeHandle: requirePermission(Permissions.customers.create),
       body: CreateCustomerSchema,
     },
   )
   .get(
     "/customers/:id",
     async ({ db, params, status }) => {
-      const customer = await getCustomerRecordById(params.id, db);
-      if (!customer) return status(404, { error: "NOT_FOUND" });
-      return customer;
+      try {
+        return await getCustomerDetailService(db, { id: params.id });
+      } catch (error) {
+        return mapSalesError(error, status);
+      }
     },
     {
-      beforeHandle: requirePermission(Permissions.sales.read),
+      beforeHandle: requirePermission(Permissions.customers.read),
       params: IdParamSchema,
     },
   )
@@ -498,8 +534,8 @@ export const salesRoutes = new Elysia()
           id: params.id,
           input: body,
         });
-        await auditSalesEvent(auditCtxFromRoute(ctx), db, {
-          action: "SALES.CUSTOMER.UPDATE",
+        await auditCustomerEvent(auditCtxFromRoute(ctx), db, {
+          action: "CUSTOMER.UPDATE",
           entityId: updated.id,
           before,
           after: updated,
@@ -510,9 +546,32 @@ export const salesRoutes = new Elysia()
       }
     },
     {
-      beforeHandle: requirePermission(Permissions.sales.update),
+      beforeHandle: requirePermission(Permissions.customers.update),
       params: IdParamSchema,
       body: UpdateCustomerSchema,
+    },
+  )
+  .delete(
+    "/customers/:id",
+    async (ctx) => {
+      const { db, params, status } = ctx;
+      try {
+        const { before, deleted } = await deleteCustomerService(db, {
+          id: params.id,
+        });
+        await auditCustomerEvent(auditCtxFromRoute(ctx), db, {
+          action: "CUSTOMER.DELETE",
+          entityId: deleted.id,
+          before,
+        });
+        return deleted;
+      } catch (error) {
+        return mapSalesError(error, status);
+      }
+    },
+    {
+      beforeHandle: requirePermission(Permissions.customers.delete),
+      params: IdParamSchema,
     },
   )
   .get(

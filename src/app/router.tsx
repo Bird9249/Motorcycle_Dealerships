@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { lazy } from "react";
 import { z } from "zod";
+import { WarrantiesListQuerySchema } from "@/modules/after-sales/domain/contracts";
 import { RequirePermissions } from "@/modules/auth/presentation/ui/RequirePermissions";
 import { LazyPage } from "@/shared/ui/LazyPage";
 
@@ -175,6 +176,13 @@ const CustomersPage = lazy(() =>
     }),
   ),
 );
+const CustomerDetailPage = lazy(() =>
+  import("@/modules/sales/presentation/pages/CustomerDetailPage").then(
+    (module) => ({
+      default: module.CustomerDetailPage,
+    }),
+  ),
+);
 const PaymentsPage = lazy(() =>
   import("@/modules/payments/presentation/pages/PaymentsPage").then(
     (module) => ({
@@ -200,6 +208,27 @@ const ReconciliationPage = lazy(() =>
   import("@/modules/payments/presentation/pages/ReconciliationPage").then(
     (module) => ({
       default: module.ReconciliationPage,
+    }),
+  ),
+);
+const WarrantiesPage = lazy(() =>
+  import("@/modules/after-sales/presentation/pages/WarrantiesPage").then(
+    (module) => ({
+      default: module.WarrantiesPage,
+    }),
+  ),
+);
+const WarrantyDetailPage = lazy(() =>
+  import("@/modules/after-sales/presentation/pages/WarrantyDetailPage").then(
+    (module) => ({
+      default: module.WarrantyDetailPage,
+    }),
+  ),
+);
+const ServiceCheckInPage = lazy(() =>
+  import("@/modules/after-sales/presentation/pages/ServiceCheckInPage").then(
+    (module) => ({
+      default: module.ServiceCheckInPage,
     }),
   ),
 );
@@ -503,15 +532,40 @@ const customersSearchSchema = z.object({
 
 const customersRoute = createRoute({
   getParentRoute: () => appRoute,
-  path: "/sales/customers",
+  path: "/customers",
   validateSearch: (search) => customersSearchSchema.parse(search),
   component: () => (
-    <RequirePermissions all={["sales:read"]}>
+    <RequirePermissions all={["customers:read"]}>
       <LazyPage>
         <CustomersPage />
       </LazyPage>
     </RequirePermissions>
   ),
+});
+
+const customerDetailRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/customers/$id",
+  component: () => (
+    <RequirePermissions all={["customers:read"]}>
+      <LazyPage>
+        <CustomerDetailPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const salesCustomersRedirectRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/sales/customers",
+  validateSearch: (search) => customersSearchSchema.parse(search),
+  beforeLoad: ({ search }) => {
+    throw redirect({
+      to: "/app/customers",
+      search,
+    });
+  },
+  component: () => null,
 });
 
 const paymentsSearchSchema = z.object({
@@ -600,6 +654,49 @@ const reconciliationRoute = createRoute({
   ),
 });
 
+const warrantiesRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/after-sales/warranties",
+  validateSearch: (search) => WarrantiesListQuerySchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["after-sales:read"]}>
+      <LazyPage>
+        <WarrantiesPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const warrantyDetailRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/after-sales/warranties/$id",
+  component: () => (
+    <RequirePermissions all={["after-sales:read"]}>
+      <LazyPage>
+        <WarrantyDetailPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
+const serviceCheckInSearchSchema = z.object({
+  vehicleId: z.string().optional(),
+  customerId: z.string().optional(),
+});
+
+const serviceCheckInRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/after-sales/service",
+  validateSearch: (search) => serviceCheckInSearchSchema.parse(search),
+  component: () => (
+    <RequirePermissions all={["after-sales:read"]}>
+      <LazyPage>
+        <ServiceCheckInPage />
+      </LazyPage>
+    </RequirePermissions>
+  ),
+});
+
 const forbiddenRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/errors/forbidden",
@@ -635,10 +732,15 @@ export const routeTree = rootRoute.addChildren([
     saleEditRoute,
     paymentScheduleRoute,
     customersRoute,
+    customerDetailRoute,
+    salesCustomersRedirectRoute,
     paymentsRoute,
     paymentCreateRoute,
     reconciliationRoute,
     paymentDetailRoute,
+    warrantiesRoute,
+    warrantyDetailRoute,
+    serviceCheckInRoute,
   ]),
   forbiddenRoute,
 ]);

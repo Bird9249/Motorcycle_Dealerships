@@ -1,39 +1,31 @@
 import {
-  AudioWaveform,
   Bike,
-  Command,
   Database,
-  GalleryVerticalEnd,
   LayoutDashboard,
   ReceiptIcon,
+  Scale,
+  ScrollText,
+  Settings,
   ShieldCheck,
   UserCog,
+  UserRound,
   Users,
   Wallet,
+  Wrench,
 } from "lucide-react";
 import type { SidebarData } from "../types";
 
 export const sidebarData: SidebarData = {
   teams: [
     {
-      name: "Shadcn Admin",
-      logo: Command,
-      plan: "Vite + ShadcnUI",
-    },
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
+      name: "ຮ້ານຈຳໜ່າຍມໍເຕີ",
+      logo: Bike,
+      plan: "Motorcycle ERP · Laos",
     },
   ],
   navGroups: [
     {
-      title: "ທົ່ວໄປ",
+      title: "ພາບລວມ",
       items: [
         {
           title: "ແຜງຄວບຄຸມ",
@@ -43,7 +35,7 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: "ທຸລະກິດ",
+      title: "ສຕັອກ",
       items: [
         {
           title: "ລາຍການລົດ",
@@ -57,12 +49,28 @@ export const sidebarData: SidebarData = {
           icon: Database,
           requiredPermissions: ["master-data:read"],
         },
+      ],
+    },
+    {
+      title: "ການຂາຍ",
+      items: [
         {
-          title: "ການຂາຍ",
+          title: "ຄຳສັ່ງຂາຍ",
           url: "/app/sales",
           icon: ReceiptIcon,
           requiredPermissions: ["sales:read"],
         },
+        {
+          title: "ລູກຄ້າ",
+          url: "/app/customers",
+          icon: UserRound,
+          requiredPermissions: ["customers:read"],
+        },
+      ],
+    },
+    {
+      title: "ການເງິນ",
+      items: [
         {
           title: "ການຊຳລະເງິນ",
           url: "/app/payments",
@@ -70,21 +78,37 @@ export const sidebarData: SidebarData = {
           requiredPermissions: ["payments:read"],
         },
         {
-          title: "ລູກຄ້າ",
-          url: "/app/sales/customers",
-          icon: Users,
-          requiredPermissions: ["sales:read"],
+          title: "ກວດສອບຍອດ",
+          url: "/app/payments/reconciliation",
+          icon: Scale,
+          requiredPermissions: ["payments:reconcile"],
         },
       ],
     },
     {
-      title: "ການຄວບຄຸມການເຂົ້າເຖິງ",
+      title: "ຫຼັງການຂາຍ",
       items: [
         {
-          title: "ບົດບາດ",
-          url: "/app/roles",
-          icon: UserCog,
-          requiredPermissions: ["users:read"],
+          title: "ປະກັນ",
+          url: "/app/after-sales/warranties",
+          icon: ShieldCheck,
+          requiredPermissions: ["after-sales:read"],
+        },
+        {
+          title: "ເຂົ້າບໍລິການ",
+          url: "/app/after-sales/service",
+          icon: Wrench,
+          requiredPermissions: ["after-sales:read"],
+        },
+      ],
+    },
+    {
+      title: "ລະບົບ",
+      items: [
+        {
+          title: "ການຕັ້ງຄ່າ",
+          url: "/app/settings",
+          icon: Settings,
         },
         {
           title: "ຜູ້ໃຊ້",
@@ -93,9 +117,15 @@ export const sidebarData: SidebarData = {
           requiredPermissions: ["users:read"],
         },
         {
+          title: "ບົດບາດ",
+          url: "/app/roles",
+          icon: UserCog,
+          requiredPermissions: ["users:read"],
+        },
+        {
           title: "ບັນທຶກການກວດກາ",
           url: "/app/audit",
-          icon: ShieldCheck,
+          icon: ScrollText,
           requiredPermissions: ["audit:read"],
         },
       ],

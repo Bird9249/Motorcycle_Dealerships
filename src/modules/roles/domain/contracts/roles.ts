@@ -8,6 +8,10 @@ const staffPermissions = [
   "sales:read",
   "sales:update",
   "sales:confirm",
+  "customers:create",
+  "customers:read",
+  "customers:update",
+  "after-sales:read",
   "payments:create",
   "payments:read",
 ] satisfies PermissionId[];
@@ -20,6 +24,9 @@ const managerPermissions = [
   "payments:reconcile",
   "payments:update",
   "sales:cancel",
+  "customers:delete",
+  "after-sales:manage-warranty",
+  "after-sales:create-service",
   "audit:read",
 ] satisfies PermissionId[];
 

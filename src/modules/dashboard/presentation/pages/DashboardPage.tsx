@@ -7,6 +7,7 @@ import { RecentBookings } from "../ui/RecentBookings";
 import { RevenueChart } from "../ui/RevenueChart";
 import { RoomStatus } from "../ui/RoomStatus";
 import { StatCards } from "../ui/StatCards";
+import { WarrantyExpiryAlert } from "../ui/WarrantyExpiryAlert";
 
 export function DashboardPage() {
   return (
@@ -27,6 +28,7 @@ export function DashboardPage() {
 
         <div className="flex flex-col gap-4">
           <StatCards />
+          <WarrantyExpiryAlert />
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             <RevenueChart />

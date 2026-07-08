@@ -15,6 +15,13 @@
       "when": 1783259940566,
       "tag": "0001_conscious_spencer_smythe",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783535309293,
+      "tag": "0002_jittery_harry_osborn",
+      "breakpoints": true
     }
   ]
 }

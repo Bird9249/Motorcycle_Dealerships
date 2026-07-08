@@ -111,6 +111,36 @@ const ALLOWLIST_BY_ENTITY: Record<string, readonly string[]> = {
     "difference",
     "status",
   ],
+  customer: [
+    "id",
+    "fullName",
+    "phone",
+    "phoneSecondary",
+    "village",
+    "district",
+    "province",
+    "idCardNumber",
+    "householdBookNumber",
+    "notes",
+  ],
+  warranty: [
+    "id",
+    "vehicleId",
+    "customerId",
+    "salesOrderId",
+    "warrantyType",
+    "startDate",
+    "endDate",
+    "durationMonths",
+    "batterySerialNumber",
+    "status",
+  ],
+  warranty_settings: [
+    "id",
+    "vehicleMonths",
+    "motorMonths",
+    "batteryMonths",
+  ],
 };
 
 const REDACTED = "[REDACTED]" as const;

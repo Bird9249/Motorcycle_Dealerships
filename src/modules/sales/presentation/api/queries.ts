@@ -42,6 +42,7 @@ function getErrorMessage(error: unknown) {
 
 export function useSalesOrdersQuery(
   query: Partial<SalesOrdersListQueryDTO> = {},
+  enabled = true,
 ) {
   const q: SalesOrdersListQueryDTO = {
     limit: query.limit ?? 20,
@@ -59,6 +60,7 @@ export function useSalesOrdersQuery(
   return useQuery({
     queryKey: salesKeys.orders(q),
     queryFn: () => salesApi.listOrders(q),
+    enabled,
   });
 }
 
@@ -177,6 +179,18 @@ export function useUpdateCustomer(id: string) {
       qc.invalidateQueries({ queryKey: salesKeys.customer(id) });
       qc.invalidateQueries({ queryKey: salesKeys.all });
       toast.success("ອັບເດດລູກຄ້າສຳເລັດ");
+    },
+    onError: (error) => toast.error(getErrorMessage(error)),
+  });
+}
+
+export function useDeleteCustomer() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => salesApi.deleteCustomer(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: salesKeys.all });
+      toast.success("ລຶບລູກຄ້າສຳເລັດ");
     },
     onError: (error) => toast.error(getErrorMessage(error)),
   });

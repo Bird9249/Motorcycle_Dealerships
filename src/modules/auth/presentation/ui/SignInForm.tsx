@@ -56,13 +56,13 @@ export default function SignInForm() {
         name="email"
         label="ອີເມວ"
         requiredMark
-        placeholder="name@example.com"
+        placeholder="you@dealership.la"
       />
       <FormPassword
         name="password"
         label="ລະຫັດຜ່ານ"
         requiredMark
-        placeholder="********"
+        placeholder="••••••••"
       />
 
       <FormCheckbox name="rememberMe" label="ຈໍາຂ້ອຍໄວ້" />
